@@ -1,0 +1,1807 @@
+{
+  "schema_version": "1.0",
+  "fixture_id": "jitu-fixture-v1",
+  "title": "机图索隐 V1 离线合成夹具",
+  "description": "用于验证导入、证据链和跨图关联检索流程的可复现合成数据。",
+  "dataset_kind": "synthetic_fixture",
+  "evaluation_status": "not_evaluated",
+  "generated_at": "2026-09-02T00:00:00+00:00",
+  "generator_version": "fixture-generator-1.0",
+  "disclaimer": "Synthetic fixture only; evaluation_status=not_evaluated，不得作为真实古籍研究结论。",
+  "sources": [
+    {
+      "source_id": "src-agri-illustrated",
+      "source_url": "https://example.invalid/jitu/source/agri",
+      "source_name": "JiTu synthetic source A",
+      "book_title": "农政全书（合成示例）",
+      "author": "徐光启（示例署名）",
+      "era": "明代（示例）",
+      "edition": "合成演示版 A",
+      "volume": "示例卷",
+      "page_or_folio": "见各页",
+      "license_status": "synthetic_fixture",
+      "license_note": "纯合成示例；此来源用于资源许可限制流程演示，不允许通过公开接口再分发。",
+      "allow_training": true,
+      "allow_redistribution": false,
+      "retrieved_at": "2026-09-02T00:00:00+00:00",
+      "pipeline_version": "jitu-ingestion-contract-1.0"
+    },
+    {
+      "source_id": "src-water-engineering",
+      "source_url": "https://example.invalid/jitu/source/water",
+      "source_name": "JiTu synthetic source B",
+      "book_title": "天工开物（合成示例）",
+      "author": "宋应星（示例署名）",
+      "era": "明代（示例）",
+      "edition": "合成演示版 B",
+      "volume": "示例卷",
+      "page_or_folio": "见各页",
+      "license_status": "synthetic_fixture",
+      "license_note": "纯合成示例，禁止作为真实古籍研究结论；仅用于软件流程演示。",
+      "allow_training": true,
+      "allow_redistribution": true,
+      "retrieved_at": "2026-09-02T00:00:00+00:00",
+      "pipeline_version": "jitu-ingestion-contract-1.0"
+    },
+    {
+      "source_id": "src-textile-machines",
+      "source_url": "https://example.invalid/jitu/source/textile",
+      "source_name": "JiTu synthetic source C",
+      "book_title": "纺织图谱（合成示例）",
+      "author": "机图索隐研究组（示例署名）",
+      "era": "传统工艺（示例）",
+      "edition": "合成演示版 C",
+      "volume": "示例卷",
+      "page_or_folio": "见各页",
+      "license_status": "synthetic_fixture",
+      "license_note": "纯合成示例，禁止作为真实古籍研究结论；仅用于软件流程演示。",
+      "allow_training": true,
+      "allow_redistribution": true,
+      "retrieved_at": "2026-09-02T00:00:00+00:00",
+      "pipeline_version": "jitu-ingestion-contract-1.0"
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "asset-fig-water-wheel-01",
+      "relative_path": "fixture_v1/fig-water-wheel-01.png",
+      "mime_type": "image/png",
+      "sha256": "d2701e96266b09ae05b0f9f0e1a0c5e8e487779a700045f3247a2faa3e4eb078",
+      "width": 512,
+      "height": 384
+    },
+    {
+      "asset_id": "asset-fig-chain-pump-01",
+      "relative_path": "fixture_v1/fig-chain-pump-01.png",
+      "mime_type": "image/png",
+      "sha256": "d56f7efcbf77b32f143885faa1512ee896ab449133a1b4f561d3eebb17388945",
+      "width": 512,
+      "height": 384
+    },
+    {
+      "asset_id": "asset-fig-bucket-wheel-01",
+      "relative_path": "fixture_v1/fig-bucket-wheel-01.png",
+      "mime_type": "image/png",
+      "sha256": "3d3120dad5aeff7a3d1376cd9849c427f9571e9a44f1373bd2b64129dbd770e9",
+      "width": 512,
+      "height": 384
+    },
+    {
+      "asset_id": "asset-fig-loom-01",
+      "relative_path": "fixture_v1/fig-loom-01.png",
+      "mime_type": "image/png",
+      "sha256": "0fdf4fec8c34ca2d1afc15c7e6c54c2351c2d75d3489d0859035cd0465542593",
+      "width": 512,
+      "height": 384
+    },
+    {
+      "asset_id": "asset-fig-spindle-01",
+      "relative_path": "fixture_v1/fig-spindle-01.png",
+      "mime_type": "image/png",
+      "sha256": "759e03159c1f0079749f8ca7c83699a2c0119eab7ccc2a3cd7919ac469329e94",
+      "width": 512,
+      "height": 384
+    },
+    {
+      "asset_id": "asset-fig-jacquard-01",
+      "relative_path": "fixture_v1/fig-jacquard-01.png",
+      "mime_type": "image/png",
+      "sha256": "d3c7a2080eec83d502edabd1028fce8731bf7fd52a48f35188889d40cd37ed73",
+      "width": 512,
+      "height": 384
+    },
+    {
+      "asset_id": "asset-fig-crossbow-01",
+      "relative_path": "fixture_v1/fig-crossbow-01.png",
+      "mime_type": "image/png",
+      "sha256": "0410e90b1bb83f6628b43ef4f4c09913610a88ca3a5ed349ec1713d4a640fa0f",
+      "width": 512,
+      "height": 384
+    },
+    {
+      "asset_id": "asset-fig-cannon-cart-01",
+      "relative_path": "fixture_v1/fig-cannon-cart-01.png",
+      "mime_type": "image/png",
+      "sha256": "8e41ed00a029ed2029f101736d2651f57c69d81e30abf8961b84fc255f3ec277",
+      "width": 512,
+      "height": 384
+    },
+    {
+      "asset_id": "asset-fig-grain-mill-01",
+      "relative_path": "fixture_v1/fig-grain-mill-01.png",
+      "mime_type": "image/png",
+      "sha256": "496ddbb526a2a1d69d92b84dbdd4a9ee458027d6011eae2470c82f2a6a2fbfd5",
+      "width": 512,
+      "height": 384
+    }
+  ],
+  "pages": [
+    {
+      "page_id": "page-fig-water-wheel-01",
+      "source_id": "src-agri-illustrated",
+      "volume": "示例卷1",
+      "page_or_folio": "folio-01"
+    },
+    {
+      "page_id": "page-fig-chain-pump-01",
+      "source_id": "src-agri-illustrated",
+      "volume": "示例卷1",
+      "page_or_folio": "folio-02"
+    },
+    {
+      "page_id": "page-fig-bucket-wheel-01",
+      "source_id": "src-water-engineering",
+      "volume": "示例卷1",
+      "page_or_folio": "folio-03"
+    },
+    {
+      "page_id": "page-fig-loom-01",
+      "source_id": "src-textile-machines",
+      "volume": "示例卷2",
+      "page_or_folio": "folio-04"
+    },
+    {
+      "page_id": "page-fig-spindle-01",
+      "source_id": "src-textile-machines",
+      "volume": "示例卷2",
+      "page_or_folio": "folio-05"
+    },
+    {
+      "page_id": "page-fig-jacquard-01",
+      "source_id": "src-textile-machines",
+      "volume": "示例卷2",
+      "page_or_folio": "folio-06"
+    },
+    {
+      "page_id": "page-fig-crossbow-01",
+      "source_id": "src-agri-illustrated",
+      "volume": "示例卷3",
+      "page_or_folio": "folio-07"
+    },
+    {
+      "page_id": "page-fig-cannon-cart-01",
+      "source_id": "src-water-engineering",
+      "volume": "示例卷3",
+      "page_or_folio": "folio-08"
+    },
+    {
+      "page_id": "page-fig-grain-mill-01",
+      "source_id": "src-water-engineering",
+      "volume": "示例卷3",
+      "page_or_folio": "folio-09"
+    }
+  ],
+  "figures": [
+    {
+      "figure_id": "fig-water-wheel-01",
+      "page_id": "page-fig-water-wheel-01",
+      "asset_id": "asset-fig-water-wheel-01",
+      "title": "水车",
+      "caption": "以轮叶承水并连续提灌的水力装置。",
+      "bbox": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.63
+      },
+      "original_path": "fixture_v1/fig-water-wheel-01.png"
+    },
+    {
+      "figure_id": "fig-chain-pump-01",
+      "page_id": "page-fig-chain-pump-01",
+      "asset_id": "asset-fig-chain-pump-01",
+      "title": "翻车",
+      "caption": "以链板循环提水的连续灌溉器具。",
+      "bbox": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.63
+      },
+      "original_path": "fixture_v1/fig-chain-pump-01.png"
+    },
+    {
+      "figure_id": "fig-bucket-wheel-01",
+      "page_id": "page-fig-bucket-wheel-01",
+      "asset_id": "asset-fig-bucket-wheel-01",
+      "title": "筒车",
+      "caption": "轮周水筒随水流转动，将低处水提升至渠岸。",
+      "bbox": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.63
+      },
+      "original_path": "fixture_v1/fig-bucket-wheel-01.png"
+    },
+    {
+      "figure_id": "fig-loom-01",
+      "page_id": "page-fig-loom-01",
+      "asset_id": "asset-fig-loom-01",
+      "title": "织机",
+      "caption": "经纬线交错并由梭具往复完成织造。",
+      "bbox": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.63
+      },
+      "original_path": "fixture_v1/fig-loom-01.png"
+    },
+    {
+      "figure_id": "fig-spindle-01",
+      "page_id": "page-fig-spindle-01",
+      "asset_id": "asset-fig-spindle-01",
+      "title": "纺车",
+      "caption": "大轮带动锭子旋转，将纤维捻成纱线。",
+      "bbox": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.63
+      },
+      "original_path": "fixture_v1/fig-spindle-01.png"
+    },
+    {
+      "figure_id": "fig-jacquard-01",
+      "page_id": "page-fig-jacquard-01",
+      "asset_id": "asset-fig-jacquard-01",
+      "title": "提花机",
+      "caption": "提综机构按纹样选择性升降经线。",
+      "bbox": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.63
+      },
+      "original_path": "fixture_v1/fig-jacquard-01.png"
+    },
+    {
+      "figure_id": "fig-crossbow-01",
+      "page_id": "page-fig-crossbow-01",
+      "asset_id": "asset-fig-crossbow-01",
+      "title": "连弩",
+      "caption": "连续上弦与发射的弩机，用于远射。",
+      "bbox": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.63
+      },
+      "original_path": "fixture_v1/fig-crossbow-01.png"
+    },
+    {
+      "figure_id": "fig-cannon-cart-01",
+      "page_id": "page-fig-cannon-cart-01",
+      "asset_id": "asset-fig-cannon-cart-01",
+      "title": "炮车",
+      "caption": "车轮承托炮身并调节发射方向。",
+      "bbox": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.63
+      },
+      "original_path": "fixture_v1/fig-cannon-cart-01.png"
+    },
+    {
+      "figure_id": "fig-grain-mill-01",
+      "page_id": "page-fig-grain-mill-01",
+      "asset_id": "asset-fig-grain-mill-01",
+      "title": "水碓",
+      "caption": "水力驱动杵臼往复舂捣谷物。",
+      "bbox": {
+        "x": 0.08,
+        "y": 0.18,
+        "width": 0.84,
+        "height": 0.63
+      },
+      "original_path": "fixture_v1/fig-grain-mill-01.png"
+    }
+  ],
+  "regions": [
+    {
+      "region_id": "region-fig-water-wheel-01-drive",
+      "figure_id": "fig-water-wheel-01",
+      "label": "主动部件",
+      "role": "动力输入",
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.3,
+        "height": 0.34
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-water-wheel-01-work",
+      "figure_id": "fig-water-wheel-01",
+      "label": "工作部件",
+      "role": "作用输出",
+      "bbox": {
+        "x": 0.53,
+        "y": 0.3,
+        "width": 0.28,
+        "height": 0.3
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-chain-pump-01-drive",
+      "figure_id": "fig-chain-pump-01",
+      "label": "主动部件",
+      "role": "动力输入",
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.3,
+        "height": 0.34
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-chain-pump-01-work",
+      "figure_id": "fig-chain-pump-01",
+      "label": "工作部件",
+      "role": "作用输出",
+      "bbox": {
+        "x": 0.53,
+        "y": 0.3,
+        "width": 0.28,
+        "height": 0.3
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-bucket-wheel-01-drive",
+      "figure_id": "fig-bucket-wheel-01",
+      "label": "主动部件",
+      "role": "动力输入",
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.3,
+        "height": 0.34
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-bucket-wheel-01-work",
+      "figure_id": "fig-bucket-wheel-01",
+      "label": "工作部件",
+      "role": "作用输出",
+      "bbox": {
+        "x": 0.53,
+        "y": 0.3,
+        "width": 0.28,
+        "height": 0.3
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-loom-01-drive",
+      "figure_id": "fig-loom-01",
+      "label": "主动部件",
+      "role": "动力输入",
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.3,
+        "height": 0.34
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-loom-01-work",
+      "figure_id": "fig-loom-01",
+      "label": "工作部件",
+      "role": "作用输出",
+      "bbox": {
+        "x": 0.53,
+        "y": 0.3,
+        "width": 0.28,
+        "height": 0.3
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-spindle-01-drive",
+      "figure_id": "fig-spindle-01",
+      "label": "主动部件",
+      "role": "动力输入",
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.3,
+        "height": 0.34
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-spindle-01-work",
+      "figure_id": "fig-spindle-01",
+      "label": "工作部件",
+      "role": "作用输出",
+      "bbox": {
+        "x": 0.53,
+        "y": 0.3,
+        "width": 0.28,
+        "height": 0.3
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-jacquard-01-drive",
+      "figure_id": "fig-jacquard-01",
+      "label": "主动部件",
+      "role": "动力输入",
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.3,
+        "height": 0.34
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-jacquard-01-work",
+      "figure_id": "fig-jacquard-01",
+      "label": "工作部件",
+      "role": "作用输出",
+      "bbox": {
+        "x": 0.53,
+        "y": 0.3,
+        "width": 0.28,
+        "height": 0.3
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-crossbow-01-drive",
+      "figure_id": "fig-crossbow-01",
+      "label": "主动部件",
+      "role": "动力输入",
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.3,
+        "height": 0.34
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-crossbow-01-work",
+      "figure_id": "fig-crossbow-01",
+      "label": "工作部件",
+      "role": "作用输出",
+      "bbox": {
+        "x": 0.53,
+        "y": 0.3,
+        "width": 0.28,
+        "height": 0.3
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-cannon-cart-01-drive",
+      "figure_id": "fig-cannon-cart-01",
+      "label": "主动部件",
+      "role": "动力输入",
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.3,
+        "height": 0.34
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-cannon-cart-01-work",
+      "figure_id": "fig-cannon-cart-01",
+      "label": "工作部件",
+      "role": "作用输出",
+      "bbox": {
+        "x": 0.53,
+        "y": 0.3,
+        "width": 0.28,
+        "height": 0.3
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-grain-mill-01-drive",
+      "figure_id": "fig-grain-mill-01",
+      "label": "主动部件",
+      "role": "动力输入",
+      "bbox": {
+        "x": 0.16,
+        "y": 0.28,
+        "width": 0.3,
+        "height": 0.34
+      },
+      "evidence_state": "Observed"
+    },
+    {
+      "region_id": "region-fig-grain-mill-01-work",
+      "figure_id": "fig-grain-mill-01",
+      "label": "工作部件",
+      "role": "作用输出",
+      "bbox": {
+        "x": 0.53,
+        "y": 0.3,
+        "width": 0.28,
+        "height": 0.3
+      },
+      "evidence_state": "Observed"
+    }
+  ],
+  "text_chunks": [
+    {
+      "text_id": "text-fig-water-wheel-01-title",
+      "figure_id": "fig-water-wheel-01",
+      "kind": "title",
+      "content": "水车",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-water-wheel-01-context",
+      "figure_id": "fig-water-wheel-01",
+      "kind": "context",
+      "content": "以轮叶承水并连续提灌的水力装置。 动力为流水，运动形式为旋转，用于提水灌溉。",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-chain-pump-01-title",
+      "figure_id": "fig-chain-pump-01",
+      "kind": "title",
+      "content": "翻车",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-chain-pump-01-context",
+      "figure_id": "fig-chain-pump-01",
+      "kind": "context",
+      "content": "以链板循环提水的连续灌溉器具。 动力为人力，运动形式为循环，用于提水灌溉。",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-bucket-wheel-01-title",
+      "figure_id": "fig-bucket-wheel-01",
+      "kind": "title",
+      "content": "筒车",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-bucket-wheel-01-context",
+      "figure_id": "fig-bucket-wheel-01",
+      "kind": "context",
+      "content": "轮周水筒随水流转动，将低处水提升至渠岸。 动力为流水，运动形式为旋转，用于提水灌溉。",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-loom-01-title",
+      "figure_id": "fig-loom-01",
+      "kind": "title",
+      "content": "织机",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-loom-01-context",
+      "figure_id": "fig-loom-01",
+      "kind": "context",
+      "content": "经纬线交错并由梭具往复完成织造。 动力为人力，运动形式为往复，用于织造布帛。",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-spindle-01-title",
+      "figure_id": "fig-spindle-01",
+      "kind": "title",
+      "content": "纺车",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-spindle-01-context",
+      "figure_id": "fig-spindle-01",
+      "kind": "context",
+      "content": "大轮带动锭子旋转，将纤维捻成纱线。 动力为人力，运动形式为旋转，用于纺纱。",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-jacquard-01-title",
+      "figure_id": "fig-jacquard-01",
+      "kind": "title",
+      "content": "提花机",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-jacquard-01-context",
+      "figure_id": "fig-jacquard-01",
+      "kind": "context",
+      "content": "提综机构按纹样选择性升降经线。 动力为人力，运动形式为升降，用于织造纹样。",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-crossbow-01-title",
+      "figure_id": "fig-crossbow-01",
+      "kind": "title",
+      "content": "连弩",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-crossbow-01-context",
+      "figure_id": "fig-crossbow-01",
+      "kind": "context",
+      "content": "连续上弦与发射的弩机，用于远射。 动力为人力，运动形式为往复，用于远程发射。",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-cannon-cart-01-title",
+      "figure_id": "fig-cannon-cart-01",
+      "kind": "title",
+      "content": "炮车",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-cannon-cart-01-context",
+      "figure_id": "fig-cannon-cart-01",
+      "kind": "context",
+      "content": "车轮承托炮身并调节发射方向。 动力为人力，运动形式为平移，用于火器机动。",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-grain-mill-01-title",
+      "figure_id": "fig-grain-mill-01",
+      "kind": "title",
+      "content": "水碓",
+      "evidence_state": "Documented"
+    },
+    {
+      "text_id": "text-fig-grain-mill-01-context",
+      "figure_id": "fig-grain-mill-01",
+      "kind": "context",
+      "content": "水力驱动杵臼往复舂捣谷物。 动力为流水，运动形式为往复，用于谷物加工。",
+      "evidence_state": "Documented"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "evidence-fig-water-wheel-01-image",
+      "figure_id": "fig-water-wheel-01",
+      "kind": "image",
+      "state": "Observed",
+      "source_ref": "asset-fig-water-wheel-01",
+      "excerpt": "合成线稿中的轮轴、杆件或工作部件。"
+    },
+    {
+      "evidence_id": "evidence-fig-water-wheel-01-text",
+      "figure_id": "fig-water-wheel-01",
+      "kind": "text",
+      "state": "Documented",
+      "source_ref": "text-fig-water-wheel-01-context",
+      "excerpt": "以轮叶承水并连续提灌的水力装置。"
+    },
+    {
+      "evidence_id": "evidence-fig-water-wheel-01-metadata",
+      "figure_id": "fig-water-wheel-01",
+      "kind": "metadata",
+      "state": "Documented",
+      "source_ref": "src-agri-illustrated",
+      "excerpt": "来源、卷次和版本均为合成 provenance。"
+    },
+    {
+      "evidence_id": "evidence-fig-chain-pump-01-image",
+      "figure_id": "fig-chain-pump-01",
+      "kind": "image",
+      "state": "Observed",
+      "source_ref": "asset-fig-chain-pump-01",
+      "excerpt": "合成线稿中的轮轴、杆件或工作部件。"
+    },
+    {
+      "evidence_id": "evidence-fig-chain-pump-01-text",
+      "figure_id": "fig-chain-pump-01",
+      "kind": "text",
+      "state": "Documented",
+      "source_ref": "text-fig-chain-pump-01-context",
+      "excerpt": "以链板循环提水的连续灌溉器具。"
+    },
+    {
+      "evidence_id": "evidence-fig-chain-pump-01-metadata",
+      "figure_id": "fig-chain-pump-01",
+      "kind": "metadata",
+      "state": "Documented",
+      "source_ref": "src-agri-illustrated",
+      "excerpt": "来源、卷次和版本均为合成 provenance。"
+    },
+    {
+      "evidence_id": "evidence-fig-bucket-wheel-01-image",
+      "figure_id": "fig-bucket-wheel-01",
+      "kind": "image",
+      "state": "Observed",
+      "source_ref": "asset-fig-bucket-wheel-01",
+      "excerpt": "合成线稿中的轮轴、杆件或工作部件。"
+    },
+    {
+      "evidence_id": "evidence-fig-bucket-wheel-01-text",
+      "figure_id": "fig-bucket-wheel-01",
+      "kind": "text",
+      "state": "Documented",
+      "source_ref": "text-fig-bucket-wheel-01-context",
+      "excerpt": "轮周水筒随水流转动，将低处水提升至渠岸。"
+    },
+    {
+      "evidence_id": "evidence-fig-bucket-wheel-01-metadata",
+      "figure_id": "fig-bucket-wheel-01",
+      "kind": "metadata",
+      "state": "Documented",
+      "source_ref": "src-water-engineering",
+      "excerpt": "来源、卷次和版本均为合成 provenance。"
+    },
+    {
+      "evidence_id": "evidence-fig-loom-01-image",
+      "figure_id": "fig-loom-01",
+      "kind": "image",
+      "state": "Observed",
+      "source_ref": "asset-fig-loom-01",
+      "excerpt": "合成线稿中的轮轴、杆件或工作部件。"
+    },
+    {
+      "evidence_id": "evidence-fig-loom-01-text",
+      "figure_id": "fig-loom-01",
+      "kind": "text",
+      "state": "Documented",
+      "source_ref": "text-fig-loom-01-context",
+      "excerpt": "经纬线交错并由梭具往复完成织造。"
+    },
+    {
+      "evidence_id": "evidence-fig-loom-01-metadata",
+      "figure_id": "fig-loom-01",
+      "kind": "metadata",
+      "state": "Documented",
+      "source_ref": "src-textile-machines",
+      "excerpt": "来源、卷次和版本均为合成 provenance。"
+    },
+    {
+      "evidence_id": "evidence-fig-spindle-01-image",
+      "figure_id": "fig-spindle-01",
+      "kind": "image",
+      "state": "Observed",
+      "source_ref": "asset-fig-spindle-01",
+      "excerpt": "合成线稿中的轮轴、杆件或工作部件。"
+    },
+    {
+      "evidence_id": "evidence-fig-spindle-01-text",
+      "figure_id": "fig-spindle-01",
+      "kind": "text",
+      "state": "Documented",
+      "source_ref": "text-fig-spindle-01-context",
+      "excerpt": "大轮带动锭子旋转，将纤维捻成纱线。"
+    },
+    {
+      "evidence_id": "evidence-fig-spindle-01-metadata",
+      "figure_id": "fig-spindle-01",
+      "kind": "metadata",
+      "state": "Documented",
+      "source_ref": "src-textile-machines",
+      "excerpt": "来源、卷次和版本均为合成 provenance。"
+    },
+    {
+      "evidence_id": "evidence-fig-jacquard-01-image",
+      "figure_id": "fig-jacquard-01",
+      "kind": "image",
+      "state": "Observed",
+      "source_ref": "asset-fig-jacquard-01",
+      "excerpt": "合成线稿中的轮轴、杆件或工作部件。"
+    },
+    {
+      "evidence_id": "evidence-fig-jacquard-01-text",
+      "figure_id": "fig-jacquard-01",
+      "kind": "text",
+      "state": "Documented",
+      "source_ref": "text-fig-jacquard-01-context",
+      "excerpt": "提综机构按纹样选择性升降经线。"
+    },
+    {
+      "evidence_id": "evidence-fig-jacquard-01-metadata",
+      "figure_id": "fig-jacquard-01",
+      "kind": "metadata",
+      "state": "Documented",
+      "source_ref": "src-textile-machines",
+      "excerpt": "来源、卷次和版本均为合成 provenance。"
+    },
+    {
+      "evidence_id": "evidence-fig-crossbow-01-image",
+      "figure_id": "fig-crossbow-01",
+      "kind": "image",
+      "state": "Observed",
+      "source_ref": "asset-fig-crossbow-01",
+      "excerpt": "合成线稿中的轮轴、杆件或工作部件。"
+    },
+    {
+      "evidence_id": "evidence-fig-crossbow-01-text",
+      "figure_id": "fig-crossbow-01",
+      "kind": "text",
+      "state": "Documented",
+      "source_ref": "text-fig-crossbow-01-context",
+      "excerpt": "连续上弦与发射的弩机，用于远射。"
+    },
+    {
+      "evidence_id": "evidence-fig-crossbow-01-metadata",
+      "figure_id": "fig-crossbow-01",
+      "kind": "metadata",
+      "state": "Documented",
+      "source_ref": "src-agri-illustrated",
+      "excerpt": "来源、卷次和版本均为合成 provenance。"
+    },
+    {
+      "evidence_id": "evidence-fig-cannon-cart-01-image",
+      "figure_id": "fig-cannon-cart-01",
+      "kind": "image",
+      "state": "Observed",
+      "source_ref": "asset-fig-cannon-cart-01",
+      "excerpt": "合成线稿中的轮轴、杆件或工作部件。"
+    },
+    {
+      "evidence_id": "evidence-fig-cannon-cart-01-text",
+      "figure_id": "fig-cannon-cart-01",
+      "kind": "text",
+      "state": "Documented",
+      "source_ref": "text-fig-cannon-cart-01-context",
+      "excerpt": "车轮承托炮身并调节发射方向。"
+    },
+    {
+      "evidence_id": "evidence-fig-cannon-cart-01-metadata",
+      "figure_id": "fig-cannon-cart-01",
+      "kind": "metadata",
+      "state": "Documented",
+      "source_ref": "src-water-engineering",
+      "excerpt": "来源、卷次和版本均为合成 provenance。"
+    },
+    {
+      "evidence_id": "evidence-fig-grain-mill-01-image",
+      "figure_id": "fig-grain-mill-01",
+      "kind": "image",
+      "state": "Observed",
+      "source_ref": "asset-fig-grain-mill-01",
+      "excerpt": "合成线稿中的轮轴、杆件或工作部件。"
+    },
+    {
+      "evidence_id": "evidence-fig-grain-mill-01-text",
+      "figure_id": "fig-grain-mill-01",
+      "kind": "text",
+      "state": "Documented",
+      "source_ref": "text-fig-grain-mill-01-context",
+      "excerpt": "水力驱动杵臼往复舂捣谷物。"
+    },
+    {
+      "evidence_id": "evidence-fig-grain-mill-01-metadata",
+      "figure_id": "fig-grain-mill-01",
+      "kind": "metadata",
+      "state": "Documented",
+      "source_ref": "src-water-engineering",
+      "excerpt": "来源、卷次和版本均为合成 provenance。"
+    }
+  ],
+  "functional_assertions": [
+    {
+      "assertion_id": "assertion-fig-water-wheel-01-power_source",
+      "figure_id": "fig-water-wheel-01",
+      "slot": "power_source",
+      "concept": "流水",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-text",
+        "evidence-fig-water-wheel-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-water-wheel-01-transmission",
+      "figure_id": "fig-water-wheel-01",
+      "slot": "transmission",
+      "concept": "轮轴传动",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-text",
+        "evidence-fig-water-wheel-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-water-wheel-01-motion",
+      "figure_id": "fig-water-wheel-01",
+      "slot": "motion",
+      "concept": "旋转",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-text",
+        "evidence-fig-water-wheel-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-water-wheel-01-action",
+      "figure_id": "fig-water-wheel-01",
+      "slot": "action",
+      "concept": "提水",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-text",
+        "evidence-fig-water-wheel-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-water-wheel-01-object",
+      "figure_id": "fig-water-wheel-01",
+      "slot": "object",
+      "concept": "农田水面",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-text",
+        "evidence-fig-water-wheel-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-water-wheel-01-purpose",
+      "figure_id": "fig-water-wheel-01",
+      "slot": "purpose",
+      "concept": "提水灌溉",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-text",
+        "evidence-fig-water-wheel-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-chain-pump-01-power_source",
+      "figure_id": "fig-chain-pump-01",
+      "slot": "power_source",
+      "concept": "人力",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-chain-pump-01-text",
+        "evidence-fig-chain-pump-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-chain-pump-01-transmission",
+      "figure_id": "fig-chain-pump-01",
+      "slot": "transmission",
+      "concept": "链板传动",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-chain-pump-01-text",
+        "evidence-fig-chain-pump-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-chain-pump-01-motion",
+      "figure_id": "fig-chain-pump-01",
+      "slot": "motion",
+      "concept": "循环",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-chain-pump-01-text",
+        "evidence-fig-chain-pump-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-chain-pump-01-action",
+      "figure_id": "fig-chain-pump-01",
+      "slot": "action",
+      "concept": "提水",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-chain-pump-01-text",
+        "evidence-fig-chain-pump-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-chain-pump-01-object",
+      "figure_id": "fig-chain-pump-01",
+      "slot": "object",
+      "concept": "农田水面",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-chain-pump-01-text",
+        "evidence-fig-chain-pump-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-chain-pump-01-purpose",
+      "figure_id": "fig-chain-pump-01",
+      "slot": "purpose",
+      "concept": "提水灌溉",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-chain-pump-01-text",
+        "evidence-fig-chain-pump-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-bucket-wheel-01-power_source",
+      "figure_id": "fig-bucket-wheel-01",
+      "slot": "power_source",
+      "concept": "流水",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-bucket-wheel-01-text",
+        "evidence-fig-bucket-wheel-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-bucket-wheel-01-transmission",
+      "figure_id": "fig-bucket-wheel-01",
+      "slot": "transmission",
+      "concept": "轮周承载",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-bucket-wheel-01-text",
+        "evidence-fig-bucket-wheel-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-bucket-wheel-01-motion",
+      "figure_id": "fig-bucket-wheel-01",
+      "slot": "motion",
+      "concept": "旋转",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-bucket-wheel-01-text",
+        "evidence-fig-bucket-wheel-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-bucket-wheel-01-action",
+      "figure_id": "fig-bucket-wheel-01",
+      "slot": "action",
+      "concept": "提水",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-bucket-wheel-01-text",
+        "evidence-fig-bucket-wheel-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-bucket-wheel-01-object",
+      "figure_id": "fig-bucket-wheel-01",
+      "slot": "object",
+      "concept": "灌渠",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-bucket-wheel-01-text",
+        "evidence-fig-bucket-wheel-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-bucket-wheel-01-purpose",
+      "figure_id": "fig-bucket-wheel-01",
+      "slot": "purpose",
+      "concept": "提水灌溉",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-bucket-wheel-01-text",
+        "evidence-fig-bucket-wheel-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-loom-01-power_source",
+      "figure_id": "fig-loom-01",
+      "slot": "power_source",
+      "concept": "人力",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-loom-01-text",
+        "evidence-fig-loom-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-loom-01-transmission",
+      "figure_id": "fig-loom-01",
+      "slot": "transmission",
+      "concept": "杆件联动",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-loom-01-text",
+        "evidence-fig-loom-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-loom-01-motion",
+      "figure_id": "fig-loom-01",
+      "slot": "motion",
+      "concept": "往复",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-loom-01-text",
+        "evidence-fig-loom-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-loom-01-action",
+      "figure_id": "fig-loom-01",
+      "slot": "action",
+      "concept": "织造",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-loom-01-text",
+        "evidence-fig-loom-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-loom-01-object",
+      "figure_id": "fig-loom-01",
+      "slot": "object",
+      "concept": "经纬纱线",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-loom-01-text",
+        "evidence-fig-loom-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-loom-01-purpose",
+      "figure_id": "fig-loom-01",
+      "slot": "purpose",
+      "concept": "织造布帛",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-loom-01-text",
+        "evidence-fig-loom-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-spindle-01-power_source",
+      "figure_id": "fig-spindle-01",
+      "slot": "power_source",
+      "concept": "人力",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-spindle-01-text",
+        "evidence-fig-spindle-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-spindle-01-transmission",
+      "figure_id": "fig-spindle-01",
+      "slot": "transmission",
+      "concept": "带轮传动",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-spindle-01-text",
+        "evidence-fig-spindle-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-spindle-01-motion",
+      "figure_id": "fig-spindle-01",
+      "slot": "motion",
+      "concept": "旋转",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-spindle-01-text",
+        "evidence-fig-spindle-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-spindle-01-action",
+      "figure_id": "fig-spindle-01",
+      "slot": "action",
+      "concept": "纺纱",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-spindle-01-text",
+        "evidence-fig-spindle-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-spindle-01-object",
+      "figure_id": "fig-spindle-01",
+      "slot": "object",
+      "concept": "纤维束",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-spindle-01-text",
+        "evidence-fig-spindle-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-spindle-01-purpose",
+      "figure_id": "fig-spindle-01",
+      "slot": "purpose",
+      "concept": "纺纱",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-spindle-01-text",
+        "evidence-fig-spindle-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-jacquard-01-power_source",
+      "figure_id": "fig-jacquard-01",
+      "slot": "power_source",
+      "concept": "人力",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-jacquard-01-text",
+        "evidence-fig-jacquard-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-jacquard-01-transmission",
+      "figure_id": "fig-jacquard-01",
+      "slot": "transmission",
+      "concept": "杆件联动",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-jacquard-01-text",
+        "evidence-fig-jacquard-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-jacquard-01-motion",
+      "figure_id": "fig-jacquard-01",
+      "slot": "motion",
+      "concept": "升降",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-jacquard-01-text",
+        "evidence-fig-jacquard-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-jacquard-01-action",
+      "figure_id": "fig-jacquard-01",
+      "slot": "action",
+      "concept": "织造",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-jacquard-01-text",
+        "evidence-fig-jacquard-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-jacquard-01-object",
+      "figure_id": "fig-jacquard-01",
+      "slot": "object",
+      "concept": "经线",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-jacquard-01-text",
+        "evidence-fig-jacquard-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-jacquard-01-purpose",
+      "figure_id": "fig-jacquard-01",
+      "slot": "purpose",
+      "concept": "织造纹样",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-jacquard-01-text",
+        "evidence-fig-jacquard-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-crossbow-01-power_source",
+      "figure_id": "fig-crossbow-01",
+      "slot": "power_source",
+      "concept": "人力",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-crossbow-01-text",
+        "evidence-fig-crossbow-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-crossbow-01-transmission",
+      "figure_id": "fig-crossbow-01",
+      "slot": "transmission",
+      "concept": "杠杆传动",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-crossbow-01-text",
+        "evidence-fig-crossbow-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-crossbow-01-motion",
+      "figure_id": "fig-crossbow-01",
+      "slot": "motion",
+      "concept": "往复",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-crossbow-01-text",
+        "evidence-fig-crossbow-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-crossbow-01-action",
+      "figure_id": "fig-crossbow-01",
+      "slot": "action",
+      "concept": "发射",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-crossbow-01-text",
+        "evidence-fig-crossbow-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-crossbow-01-object",
+      "figure_id": "fig-crossbow-01",
+      "slot": "object",
+      "concept": "箭矢",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-crossbow-01-text",
+        "evidence-fig-crossbow-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-crossbow-01-purpose",
+      "figure_id": "fig-crossbow-01",
+      "slot": "purpose",
+      "concept": "远程发射",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-crossbow-01-text",
+        "evidence-fig-crossbow-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-cannon-cart-01-power_source",
+      "figure_id": "fig-cannon-cart-01",
+      "slot": "power_source",
+      "concept": "人力",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-cannon-cart-01-text",
+        "evidence-fig-cannon-cart-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-cannon-cart-01-transmission",
+      "figure_id": "fig-cannon-cart-01",
+      "slot": "transmission",
+      "concept": "轮轴承载",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-cannon-cart-01-text",
+        "evidence-fig-cannon-cart-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-cannon-cart-01-motion",
+      "figure_id": "fig-cannon-cart-01",
+      "slot": "motion",
+      "concept": "平移",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-cannon-cart-01-text",
+        "evidence-fig-cannon-cart-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-cannon-cart-01-action",
+      "figure_id": "fig-cannon-cart-01",
+      "slot": "action",
+      "concept": "机动",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-cannon-cart-01-text",
+        "evidence-fig-cannon-cart-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-cannon-cart-01-object",
+      "figure_id": "fig-cannon-cart-01",
+      "slot": "object",
+      "concept": "炮身",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-cannon-cart-01-text",
+        "evidence-fig-cannon-cart-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-cannon-cart-01-purpose",
+      "figure_id": "fig-cannon-cart-01",
+      "slot": "purpose",
+      "concept": "火器机动",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-cannon-cart-01-text",
+        "evidence-fig-cannon-cart-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-grain-mill-01-power_source",
+      "figure_id": "fig-grain-mill-01",
+      "slot": "power_source",
+      "concept": "流水",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-grain-mill-01-text",
+        "evidence-fig-grain-mill-01-image"
+      ],
+      "state": "Documented"
+    },
+    {
+      "assertion_id": "assertion-fig-grain-mill-01-transmission",
+      "figure_id": "fig-grain-mill-01",
+      "slot": "transmission",
+      "concept": "凸轮传动",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-grain-mill-01-text",
+        "evidence-fig-grain-mill-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-grain-mill-01-motion",
+      "figure_id": "fig-grain-mill-01",
+      "slot": "motion",
+      "concept": "往复",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-grain-mill-01-text",
+        "evidence-fig-grain-mill-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-grain-mill-01-action",
+      "figure_id": "fig-grain-mill-01",
+      "slot": "action",
+      "concept": "碾磨",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-grain-mill-01-text",
+        "evidence-fig-grain-mill-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-grain-mill-01-object",
+      "figure_id": "fig-grain-mill-01",
+      "slot": "object",
+      "concept": "谷物",
+      "confidence": 0.78,
+      "evidence_ids": [
+        "evidence-fig-grain-mill-01-text",
+        "evidence-fig-grain-mill-01-image"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "assertion_id": "assertion-fig-grain-mill-01-purpose",
+      "figure_id": "fig-grain-mill-01",
+      "slot": "purpose",
+      "concept": "谷物加工",
+      "confidence": 0.94,
+      "evidence_ids": [
+        "evidence-fig-grain-mill-01-text",
+        "evidence-fig-grain-mill-01-image"
+      ],
+      "state": "Documented"
+    }
+  ],
+  "relations": [
+    {
+      "relation_id": "relation-fig-water-wheel-01-main",
+      "figure_id": "fig-water-wheel-01",
+      "subject": "主动部件",
+      "predicate": "transmits",
+      "object": "工作部件",
+      "confidence": 0.83,
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-image",
+        "evidence-fig-water-wheel-01-text"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "relation_id": "relation-fig-chain-pump-01-main",
+      "figure_id": "fig-chain-pump-01",
+      "subject": "主动部件",
+      "predicate": "transmits",
+      "object": "工作部件",
+      "confidence": 0.83,
+      "evidence_ids": [
+        "evidence-fig-chain-pump-01-image",
+        "evidence-fig-chain-pump-01-text"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "relation_id": "relation-fig-bucket-wheel-01-main",
+      "figure_id": "fig-bucket-wheel-01",
+      "subject": "主动部件",
+      "predicate": "transmits",
+      "object": "工作部件",
+      "confidence": 0.83,
+      "evidence_ids": [
+        "evidence-fig-bucket-wheel-01-image",
+        "evidence-fig-bucket-wheel-01-text"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "relation_id": "relation-fig-loom-01-main",
+      "figure_id": "fig-loom-01",
+      "subject": "主动部件",
+      "predicate": "transmits",
+      "object": "工作部件",
+      "confidence": 0.83,
+      "evidence_ids": [
+        "evidence-fig-loom-01-image",
+        "evidence-fig-loom-01-text"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "relation_id": "relation-fig-spindle-01-main",
+      "figure_id": "fig-spindle-01",
+      "subject": "主动部件",
+      "predicate": "transmits",
+      "object": "工作部件",
+      "confidence": 0.83,
+      "evidence_ids": [
+        "evidence-fig-spindle-01-image",
+        "evidence-fig-spindle-01-text"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "relation_id": "relation-fig-jacquard-01-main",
+      "figure_id": "fig-jacquard-01",
+      "subject": "主动部件",
+      "predicate": "transmits",
+      "object": "工作部件",
+      "confidence": 0.83,
+      "evidence_ids": [
+        "evidence-fig-jacquard-01-image",
+        "evidence-fig-jacquard-01-text"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "relation_id": "relation-fig-crossbow-01-main",
+      "figure_id": "fig-crossbow-01",
+      "subject": "主动部件",
+      "predicate": "transmits",
+      "object": "工作部件",
+      "confidence": 0.83,
+      "evidence_ids": [
+        "evidence-fig-crossbow-01-image",
+        "evidence-fig-crossbow-01-text"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "relation_id": "relation-fig-cannon-cart-01-main",
+      "figure_id": "fig-cannon-cart-01",
+      "subject": "主动部件",
+      "predicate": "transmits",
+      "object": "工作部件",
+      "confidence": 0.83,
+      "evidence_ids": [
+        "evidence-fig-cannon-cart-01-image",
+        "evidence-fig-cannon-cart-01-text"
+      ],
+      "state": "Inferred"
+    },
+    {
+      "relation_id": "relation-fig-grain-mill-01-main",
+      "figure_id": "fig-grain-mill-01",
+      "subject": "主动部件",
+      "predicate": "transmits",
+      "object": "工作部件",
+      "confidence": 0.83,
+      "evidence_ids": [
+        "evidence-fig-grain-mill-01-image",
+        "evidence-fig-grain-mill-01-text"
+      ],
+      "state": "Inferred"
+    }
+  ],
+  "benchmark_pairs": [
+    {
+      "pair_id": "pair-01",
+      "query_figure_id": "fig-water-wheel-01",
+      "candidate_figure_id": "fig-chain-pump-01",
+      "label": "same_function",
+      "rationale": "均用于提水灌溉",
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-text",
+        "evidence-fig-chain-pump-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-02",
+      "query_figure_id": "fig-chain-pump-01",
+      "candidate_figure_id": "fig-bucket-wheel-01",
+      "label": "same_function",
+      "rationale": "均以连续运动提水",
+      "evidence_ids": [
+        "evidence-fig-chain-pump-01-text",
+        "evidence-fig-bucket-wheel-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-03",
+      "query_figure_id": "fig-loom-01",
+      "candidate_figure_id": "fig-spindle-01",
+      "label": "related_mechanism",
+      "rationale": "均以人力驱动纺织流程",
+      "evidence_ids": [
+        "evidence-fig-loom-01-text",
+        "evidence-fig-spindle-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-04",
+      "query_figure_id": "fig-loom-01",
+      "candidate_figure_id": "fig-jacquard-01",
+      "label": "same_function",
+      "rationale": "均作用于经纬线织造",
+      "evidence_ids": [
+        "evidence-fig-loom-01-text",
+        "evidence-fig-jacquard-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-05",
+      "query_figure_id": "fig-water-wheel-01",
+      "candidate_figure_id": "fig-bucket-wheel-01",
+      "label": "related_mechanism",
+      "rationale": "均采用轮周承水",
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-text",
+        "evidence-fig-bucket-wheel-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-06",
+      "query_figure_id": "fig-spindle-01",
+      "candidate_figure_id": "fig-jacquard-01",
+      "label": "related_mechanism",
+      "rationale": "均以纺织机构完成连续工艺",
+      "evidence_ids": [
+        "evidence-fig-spindle-01-text",
+        "evidence-fig-jacquard-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-07",
+      "query_figure_id": "fig-water-wheel-01",
+      "candidate_figure_id": "fig-loom-01",
+      "label": "similar_form_different_function",
+      "rationale": "均有轮状/框架轮廓但作用对象不同",
+      "evidence_ids": [
+        "evidence-fig-water-wheel-01-text",
+        "evidence-fig-loom-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-08",
+      "query_figure_id": "fig-chain-pump-01",
+      "candidate_figure_id": "fig-cannon-cart-01",
+      "label": "similar_form_different_function",
+      "rationale": "均出现轮件但一个提水一个承炮",
+      "evidence_ids": [
+        "evidence-fig-chain-pump-01-text",
+        "evidence-fig-cannon-cart-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-09",
+      "query_figure_id": "fig-spindle-01",
+      "candidate_figure_id": "fig-crossbow-01",
+      "label": "similar_form_different_function",
+      "rationale": "均有细长杆件但用途不同",
+      "evidence_ids": [
+        "evidence-fig-spindle-01-text",
+        "evidence-fig-crossbow-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-10",
+      "query_figure_id": "fig-cannon-cart-01",
+      "candidate_figure_id": "fig-grain-mill-01",
+      "label": "similar_form_different_function",
+      "rationale": "均有轮轴但分别用于机动与加工",
+      "evidence_ids": [
+        "evidence-fig-cannon-cart-01-text",
+        "evidence-fig-grain-mill-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-11",
+      "query_figure_id": "fig-crossbow-01",
+      "candidate_figure_id": "fig-jacquard-01",
+      "label": "similar_form_different_function",
+      "rationale": "杆件布局相似但作用对象不同",
+      "evidence_ids": [
+        "evidence-fig-crossbow-01-text",
+        "evidence-fig-jacquard-01-text"
+      ]
+    },
+    {
+      "pair_id": "pair-12",
+      "query_figure_id": "fig-bucket-wheel-01",
+      "candidate_figure_id": "fig-grain-mill-01",
+      "label": "related_mechanism",
+      "rationale": "均将水力转为机械运动",
+      "evidence_ids": [
+        "evidence-fig-bucket-wheel-01-text",
+        "evidence-fig-grain-mill-01-text"
+      ]
+    }
+  ]
+}
