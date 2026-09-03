@@ -8,6 +8,8 @@
 - 256 维确定性文本/图像 Provider、BM25、规则 CFR、关系 Provider 和 EAFR。
 - FastAPI V1 路由、统一错误、request ID、CORS、资源访问和核验持久化。
 - 3 sources、9 figures、18 regions、54 functional assertions、27 evidence、12 benchmark pairs fixture。
+- 新增 `docs/机图索隐_项目策划书.md`、`docs/机图索隐_项目需求文档.md` 和 `docs/机图索隐_项目技术文档.md`，分别覆盖竞赛策划、产品需求与当前实现细节。
+- 三份文档均区分已实现能力与后续规划，并明确 fixture 为 `not_evaluated`，OCR、真实古籍/真实模型和 ANN 尚未接入。
 
 ## 验证结果
 
@@ -17,6 +19,7 @@
 - `python -m compileall`：通过。
 - `pip check`：通过，无损坏依赖。
 - FastAPI OpenAPI：15 个 V1 操作已注册，Swagger 返回 200。
+- 文档自检：三份 Markdown 均已落盘；标题结构无重复章节序号；15 个 V1 操作、15 张领域表、39 项测试及 fixture 规模与代码和验收记录一致。
 
 ## 数据库验收状态
 
@@ -32,3 +35,4 @@
 ## 未完成
 
 - 真实古籍数据、OCR、真实模型和研究指标尚未接入。
+- EAFR 当前使用代码级注入权重和固定模态可靠性（可用 1、不可用 0）；环境配置、来源质量驱动的动态缩放与效果验证尚未完成。
