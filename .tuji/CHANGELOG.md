@@ -16,3 +16,7 @@
 - 三份文档以当前代码和 `.tuji` 验收记录为事实基线，明确区分已实现与计划能力，并持续标注 fixture 为 `not_evaluated`、OCR/真实模型/ANN 尚未接入。
 - 完成文档标题结构与关键事实自检：无重复章节序号，15 个 V1 操作、15 张领域表、39 项测试和 3/9/18/54/27/12 fixture 规模表述一致。
 - 完成语义边界复核：明确前端结果页仍待建设、效率收益待用户验证、OCR 转录核验不等于史实核验，并将动态模态可靠性缩放标为部分实现。
+- 集成 React 19、TypeScript、Vite、Zod、Vitest 前端，完成三模态检索、来源浏览、图详情、候选比较和人工核验交互。
+- 新增前端 Dockerfile、Nginx SPA/API 代理配置、Compose 前端服务和健康依赖。
+- 前端静态与自动化检查通过：Oxlint、11 项 Vitest、TypeScript/Vite build；本轮 Docker daemon 与浏览器 E2E 标记为 `not_run`。
+- 更新 README、项目文档和 `.tuji`，消除“只交付前端提示词”的过时说明，并记录非阻塞契约技术债务。

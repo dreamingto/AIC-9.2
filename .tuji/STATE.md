@@ -7,6 +7,9 @@
 - 受控 manifest loader、SHA-256/PNG/许可校验和稳定 UUID 导入器。
 - 256 维确定性文本/图像 Provider、BM25、规则 CFR、关系 Provider 和 EAFR。
 - FastAPI V1 路由、统一错误、request ID、CORS、资源访问和核验持久化。
+- React 19/TypeScript/Vite 前端，完成文本、图片、区域三模态搜索，以及来源浏览、图详情、候选比较和人工核验流程。
+- Zod API 防腐层、请求中止与路由切换状态隔离、许可受限图片降级、Capabilities 驱动的 Provider 与上传限制展示。
+- Nginx SPA 回退和 `/api/` 反向代理；Compose 已加入前端服务及健康依赖。
 - 3 sources、9 figures、18 regions、54 functional assertions、27 evidence、12 benchmark pairs fixture。
 - 新增 `docs/机图索隐_项目策划书.md`、`docs/机图索隐_项目需求文档.md` 和 `docs/机图索隐_项目技术文档.md`，分别覆盖竞赛策划、产品需求与当前实现细节。
 - 三份文档均区分已实现能力与后续规划，并明确 fixture 为 `not_evaluated`，OCR、真实古籍/真实模型和 ANN 尚未接入。
@@ -19,6 +22,8 @@
 - `python -m compileall`：通过。
 - `pip check`：通过，无损坏依赖。
 - FastAPI OpenAPI：15 个 V1 操作已注册，Swagger 返回 200。
+- 前端 Node 22：`npm ci` 成功且 0 vulnerabilities；Oxlint 通过；Vitest 2 个测试文件、11 项测试通过；TypeScript/Vite 生产构建通过。
+- `docker compose config --quiet`：通过。
 - 文档自检：三份 Markdown 均已落盘；标题结构无重复章节序号；15 个 V1 操作、15 张领域表、39 项测试及 fixture 规模与代码和验收记录一致。
 
 ## 数据库验收状态
@@ -32,7 +37,11 @@
 - 核验状态在后端重启及镜像重建后仍存在；底层 Evidence 未被自动升级。
 - 6 个可再分发资源返回 200；3 个受限资源返回 `LICENSE_RESTRICTED` 403。
 
+以上为历史后端集成验收记录。本轮审查时 Docker daemon 未运行，新增前端容器、完整 Compose 启动与浏览器 E2E 未复验。
+
 ## 未完成
 
 - 真实古籍数据、OCR、真实模型和研究指标尚未接入。
 - EAFR 当前使用代码级注入权重和固定模态可靠性（可用 1、不可用 0）；环境配置、来源质量驱动的动态缩放与效果验证尚未完成。
+- 前端仍有非阻塞类型技术债务：测试中两处显式 `any`，若干异常对象强转，以及图片查询 `filename` 可空性和错误 `details` 必填性与后端契约不完全一致。
+- Playwright/Cypress 浏览器 E2E 与当前三服务 Docker smoke test 尚未运行。

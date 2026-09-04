@@ -19,3 +19,16 @@
 - 文本、图片、区域三类检索均返回数据库候选，所有总分为有限数。
 - 允许资源返回 PNG/200；受限资源返回统一 `LICENSE_RESTRICTED`/403。
 - `worth_comparing` 核验在后端重启和镜像重建后仍存在。
+
+以上 Docker/PostgreSQL 条目来自已完成的历史后端集成验收。
+
+## 前端与本轮全栈审查
+
+- `npm ci`：186 packages，0 vulnerabilities。
+- `npm run lint`：通过，0 warnings / 0 errors。
+- `npm run test -- --run`：2 个测试文件，11/11 通过。
+- `npm run build`：通过，TypeScript 检查与 Vite 生产构建成功。
+- `docker compose config --quiet`：通过。
+- 敏感信息模式扫描：未发现 API Key、令牌或私钥；`.env`、依赖、构建产物和缓存目录均处于忽略状态。
+- Markdown 本地链接检查：未发现断链。
+- 本轮 Docker daemon 不可用，因此前端镜像、三服务启动、PostgreSQL 持久化复验和浏览器 E2E 均为 `not_run`。

@@ -9,3 +9,6 @@
 7. Compose 默认使用 AWS Public ECR 的 Docker 官方镜像缓存，避免依赖本机失效的全局镜像加速器。
 8. pgvector 使用 PGDG 的 `postgresql-16-pgvector=0.8.6-1.pgdg13+1` 固定包。
 9. 后端 Linux/Python 3.12 运行时依赖固定在 `backend/requirements.lock`。
+10. 前端采用 React 19、TypeScript、Vite 和 Zod，在 API 客户端边界执行运行时响应校验。
+11. 前端生产环境使用 Nginx 提供 SPA 路由回退并将 `/api/` 代理至 FastAPI；Compose 以后端健康状态控制前端启动顺序。
+12. 前端自动化基线使用 Oxlint、Vitest、Testing Library 与 MSW；浏览器级 E2E 必须单独验收，不能由组件测试替代。

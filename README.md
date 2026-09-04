@@ -1,8 +1,8 @@
-# 机图索隐后端 V1
+# 机图索隐全栈 V1
 
-这是“机图索隐”智能文化赛道项目的后端工程基线。当前版本面向本地或受控演示环境，完成以下闭环：
+这是“机图索隐”智能文化赛道项目的全栈工程基线。当前版本面向本地或受控演示环境，完成以下闭环：
 
-`受控 manifest 导入 -> PostgreSQL/pgvector 持久化 -> 文本/图片/区域检索 -> EAFR 重排 -> 证据返回 -> 人工核验持久化`
+`受控 manifest 导入 -> PostgreSQL/pgvector 持久化 -> 文本/图片/区域检索 -> EAFR 重排 -> React 证据展示与比较 -> 人工核验持久化`
 
 fixture 是合成数据，只用于验证接口、数据链路和可复现性。它的 `evaluation_status` 为 `not_evaluated`，不能作为真实古籍实验指标或历史传承结论。
 
@@ -29,11 +29,12 @@ PostgreSQL 16，并从 PostgreSQL 官方 PGDG 仓库安装固定版本的 pgvect
 
 服务地址：
 
+- 前端：<http://localhost>
 - API：<http://localhost:8000>
 - Swagger：<http://localhost:8000/docs>
 - OpenAPI JSON：<http://localhost:8000/openapi.json>
 
-Compose 启动时会先执行 `alembic upgrade head`，然后启动 Uvicorn。数据库不可用时 `/api/v1/health` 返回统一的 `DATABASE_UNAVAILABLE` 错误，不会切换到 SQLite。
+Compose 启动时会先执行 `alembic upgrade head`，然后启动 Uvicorn；后端健康后再启动 Nginx 前端。Nginx 为 React Router 提供 SPA 回退，并将 `/api/` 代理到后端。数据库不可用时 `/api/v1/health` 返回统一的 `DATABASE_UNAVAILABLE` 错误，不会切换到 SQLite。
 
 ## 导入 fixture
 
@@ -77,13 +78,22 @@ GET  /api/v1/ingestion/jobs/{job_id}
 
 ## 本地质量检查
 
-在 `backend` 目录执行：
+后端在 `backend` 目录执行：
 
 ```powershell
 python -m compileall -q app tests scripts
 ruff check .
 mypy app
 pytest -q
+```
+
+前端要求 Node.js `>=22.12.0`，在 `frontend` 目录执行：
+
+```powershell
+npm ci
+npm run lint
+npm run test -- --run
+npm run build
 ```
 
 当前仓库的纯 Python 检查不依赖外网或大模型。PostgreSQL migration、pgvector 读写和 Docker smoke test 需要 Docker daemon；若 daemon 未启动，这部分不能用 SQLite 替代。
@@ -94,6 +104,8 @@ pytest -q
 - `backend/app/retrieval/rerank/scoring.py`：可解释 EAFR 评分与证据覆盖。
 - `backend/app/services/ingestion_service.py`：受控 manifest 的稳定 UUID upsert 和向量生成。
 - `backend/data/manifests/jitu-fixture-v1.json`：3 个来源、9 个图单元、18 个区域和 12 个 benchmark pair；其中合成来源 C 专用于验证禁止再分发路径。
-- `机图索隐_前端对接提示词.md`：前端实现时直接使用的对接约定。
+- `frontend/`：React 19、TypeScript、Vite、Zod、Vitest 和 Nginx 组成的单页应用，覆盖三类检索、来源浏览、图详情、候选比较和人工核验。
+- `机图索隐_前端对接提示词.md`：前后端接口与文案约束。
+- `机图索隐_前端修复提示词.md`：前端契约审查与修复要求记录。
 
-首版不提供登录、账号体系、Celery、Redis、PyTorch 或远程模型。确定性 Provider 是工程 baseline，不宣称具备真实语义理解能力。
+首版不提供登录、账号体系、Celery、Redis、PyTorch 或远程模型。确定性 Provider 是工程 baseline，不宣称具备真实语义理解能力；前端展示的关联、分数和证据也不构成历史传承结论。
