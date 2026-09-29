@@ -165,7 +165,7 @@ describe('Comprehensive Frontend Scenarios', () => {
     let resolveVerifyA: () => void;
     const verifyPromise = new Promise<void>(res => { resolveVerifyA = res; });
     let capturedReq: Request | null = null;
-    let capturedBody: any = null;
+    let capturedBody: unknown = null;
 
     server.use(
        http.post('/api/v1/associations/123e4567-e89b-12d3-a456-426614174009/verify', async ({ request }) => {
@@ -224,8 +224,7 @@ describe('Comprehensive Frontend Scenarios', () => {
 
     // Assert request A payload
     expect(capturedReq).not.toBeNull();
-    expect(capturedBody.state).toBe('verified');
-    expect(capturedBody.note).toBe('my note');
+    expect(capturedBody).toMatchObject({ state: 'verified', note: 'my note' });
   });
 
   it('7. Zod Schema tests (QuerySummary)', () => {
@@ -239,7 +238,7 @@ describe('Comprehensive Frontend Scenarios', () => {
         if (params.id === '123e4567-e89b-12d3-a456-426614174008') {
            return HttpResponse.json([{ id: '123e4567-e89b-12d3-a456-426614174009', name: 'E1', source_name: null, license_status: 'public', allow_redistribution: true, book_id: '123e4567-e89b-12d3-a456-426614174008', edition_note: null }]);
         }
-        return new HttpResponse(JSON.stringify({ error: { code: 'FAIL', message: 'fail', request_id: '123' } }), { status: 500, headers: {'Content-Type': 'application/json'} });
+        return new HttpResponse(JSON.stringify({ error: { code: 'FAIL', message: 'fail', request_id: '123', details: {} } }), { status: 500, headers: {'Content-Type': 'application/json'} });
       })
     );
     render(<MemoryRouter><SourcesPage /></MemoryRouter>);
@@ -248,7 +247,7 @@ describe('Comprehensive Frontend Scenarios', () => {
   });
 
   it('9. SearchPage: region search request format', async () => {
-    let capturedBody: any = null;
+    let capturedBody: unknown = null;
     server.use(
       http.post('/api/v1/search/region', async ({ request }) => {
          capturedBody = await request.clone().json();
@@ -276,10 +275,11 @@ describe('Comprehensive Frontend Scenarios', () => {
        expect(capturedBody).not.toBeNull();
     });
 
-    expect(capturedBody.page_id).toBe('123e4567-e89b-12d3-a456-426614174000');
-    expect(capturedBody.figure_id).toBeUndefined();
-    expect(capturedBody.coordinate_space).toBe('normalized');
-    expect(capturedBody.top_k).toBe(10);
-    expect(capturedBody.bbox).toEqual({ x: 0.1, y: 0.1, width: 0.5, height: 0.5 });
+    expect(capturedBody).toEqual({
+      page_id: '123e4567-e89b-12d3-a456-426614174000',
+      coordinate_space: 'normalized',
+      top_k: 10,
+      bbox: { x: 0.1, y: 0.1, width: 0.5, height: 0.5 },
+    });
   });
 });

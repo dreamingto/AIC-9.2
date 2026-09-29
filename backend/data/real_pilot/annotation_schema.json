@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "real-pilot-v1-annotations",
+  "purpose": "真实古籍页面试标与 OCR 双层文本记录",
+  "evaluation_status": "not_evaluated",
+  "page": {
+    "page_id": "<source-id>-p0001",
+    "source_id": "<registered-source-id>",
+    "image_path": "backend/data/processed/real_pilot_v1/<source-id>/page-0001.png",
+    "width": 0,
+    "height": 0,
+    "layout": {
+      "status": "pending_review",
+      "orientation": "unknown",
+      "regions": [
+        {
+          "region_id": "<page-id>-r001",
+          "category": "text|caption|figure|annotation|unknown",
+          "bbox": {"x": 0.0, "y": 0.0, "width": 0.1, "height": 0.1},
+          "reading_order": 1,
+          "review_state": "unreviewed"
+        }
+      ],
+      "reading_order": []
+    },
+    "ocr": {
+      "status": "pending_provider",
+      "provider": null,
+      "model": null,
+      "version": null,
+      "preprocessing_hash": null,
+      "input_sha256": "<rendered-page-sha256>",
+      "lines": [
+        {
+          "line_id": "<page-id>-l001",
+          "text": "",
+          "bbox": [0, 0, 0, 0],
+          "confidence": 0.0,
+          "candidates": [],
+          "reading_order": 1,
+          "review_state": "unreviewed"
+        }
+      ]
+    },
+    "text_layers": {
+      "raw_ocr": null,
+      "corrected_text": null,
+      "correction_state": "unreviewed",
+      "reviewer": null,
+      "reviewed_at": null,
+      "change_log": []
+    },
+    "provenance": {
+      "source_url": "<registered-source-url>",
+      "source_name": "<registered-source-name>",
+      "pdf_sha256": "<source-pdf-sha256>",
+      "pipeline_version": "real-pilot-pages-v1"
+    }
+  }
+}

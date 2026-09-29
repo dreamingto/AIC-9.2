@@ -4,15 +4,29 @@ import { APIErrorEnvelopeSchema } from '../types';
 export class APIError extends Error {
   code: string;
   request_id: string;
-  details?: Record<string, unknown>;
+  details: Record<string, unknown>;
 
-  constructor(code: string, message: string, request_id: string, details?: Record<string, unknown>) {
+  constructor(code: string, message: string, request_id: string, details: Record<string, unknown> = {}) {
     super(message);
     this.name = 'APIError';
     this.code = code;
     this.request_id = request_id;
     this.details = details;
   }
+}
+
+export function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error && error.message ? error.message : fallback;
+}
+
+export function isAbortError(error: unknown): boolean {
+  return error instanceof Error && (error.name === 'AbortError' || error.message === 'aborted');
+}
+
+export function toAPIError(error: unknown, fallback: string): APIError {
+  return error instanceof APIError
+    ? error
+    : new APIError('CLIENT_ERROR', getErrorMessage(error, fallback), '');
 }
 
 export async function fetchAPI<T>(
@@ -30,7 +44,7 @@ export async function fetchAPI<T>(
       },
     });
   } catch (err) {
-    if (err instanceof Error && err.name === 'AbortError') throw err;
+    if (isAbortError(err)) throw err;
     throw new APIError('NETWORK_ERROR', 'Network request failed', '');
   }
 
@@ -57,7 +71,14 @@ export async function fetchAPI<T>(
   }
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : {};
+  let data: unknown = {};
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new APIError('API_CONTRACT_ERROR', 'API 契约校验失败: 后端返回了无效 JSON', '');
+    }
+  }
 
   try {
     return options.schema.parse(data);

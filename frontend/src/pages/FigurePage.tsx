@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchAPI, APIError } from '../api/client';
+import { fetchAPI, APIError, toAPIError } from '../api/client';
 import { FigureResponseSchema } from '../types';
 import type { FigureResponse } from '../types';
 
@@ -38,8 +38,8 @@ export default function FigurePage() {
       .then(res => {
          if (!controller.signal.aborted) setData(res);
       })
-      .catch(err => {
-        if (!controller.signal.aborted) setError(err);
+      .catch((err: unknown) => {
+        if (!controller.signal.aborted) setError(toAPIError(err, '加载技术图失败'));
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);

@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "real-pilot-v1",
+  "evaluation_status": "not_evaluated",
+  "retrieved_at": "2026-09-04T07:24:24Z",
+  "sources": [
+    {
+      "source_id": "commons-najda-tiangong-kaiwu-2",
+      "book_title": "天工開物",
+      "author": "宋應星（明）",
+      "edition_note": "日本国立公文书馆藏扫描；Commons API 未提供可确认的刊刻年份，本阶段不推断。",
+      "volume": "2",
+      "source_name": "Wikimedia Commons / National Archives of Japan",
+      "source_url": "https://commons.wikimedia.org/wiki/File:NAJDA-183-0016_%E5%A4%A9%E5%B7%A5%E9%96%8B%E7%89%A9_2.pdf",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/0/05/NAJDA-183-0016_%E5%A4%A9%E5%B7%A5%E9%96%8B%E7%89%A9_2.pdf",
+      "local_filename": "tiangong-kaiwu-vol2-najda.pdf",
+      "mime_type": "application/pdf",
+      "page_count": 28,
+      "expected_bytes": 5581670,
+      "expected_sha1": "7a20ab4b2a5bf3ffe5af7ba2f2ba840699b1518f",
+      "sha256": "084fbb36535699abfc7429ca3cad88f13dac4ab1ec9fb815212a9427d2e3b835",
+      "license_status": "public_domain",
+      "license_note": "Commons extmetadata: Public domain; attribution not required; restrictions empty. Recheck before external release.",
+      "allow_training": true,
+      "allow_redistribution": true,
+      "pilot_selection": "primary_all_28_pages",
+      "pipeline_version": "real-pilot-source-v1"
+    },
+    {
+      "source_id": "commons-najda-nongzheng-quanshu-1",
+      "book_title": "農政全書",
+      "author": "徐光啓（明）",
+      "edition_note": "日本国立公文书馆藏扫描；Commons API 未提供可确认的刊刻年份，本阶段不推断。",
+      "volume": "1",
+      "source_name": "Wikimedia Commons / National Archives of Japan",
+      "source_url": "https://commons.wikimedia.org/wiki/File:NAJDA-300-0092_%E8%BE%B2%E6%94%BF%E5%85%A8%E6%9B%B81.pdf",
+      "download_url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/NAJDA-300-0092_%E8%BE%B2%E6%94%BF%E5%85%A8%E6%9B%B81.pdf",
+      "local_filename": "nongzheng-quanshu-vol1-najda.pdf",
+      "mime_type": "application/pdf",
+      "page_count": 79,
+      "expected_bytes": 20800596,
+      "expected_sha1": "089ee64d141a6eced684fea43d434d08dab02fc4",
+      "sha256": "327c103a99f7ecc2e92cd5fcdcdf5045c7b2cbb20fd3985e877f41732b6f4aba",
+      "license_status": "public_domain",
+      "license_note": "Commons extmetadata: Public domain; attribution not required; restrictions empty. Recheck before external release.",
+      "allow_training": true,
+      "allow_redistribution": true,
+      "pilot_selection": "secondary_pending_page_review",
+      "pipeline_version": "real-pilot-source-v1"
+    }
+  ]
+}

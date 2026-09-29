@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchAPI, APIError } from '../api/client';
+import { fetchAPI, APIError, toAPIError } from '../api/client';
 import { CandidateResponseSchema, SearchResponseSchema, VerificationResponseSchema } from '../types';
 import type { CandidateResponse, CapabilitiesResponse, SearchResponse, VerificationState } from '../types';
+
+const SCORE_COMPONENT_KEYS = ['sv', 'st', 'sr', 'sf', 'sg', 'se', 'u_model'] as const;
 
 export default function ComparePage({ capabilities }: { capabilities: CapabilitiesResponse }) {
   const { candidateId } = useParams();
@@ -57,8 +59,8 @@ export default function ComparePage({ capabilities }: { capabilities: Capabiliti
            setSearchData(searchRes);
          }
       })
-      .catch(err => {
-         if (!controller.signal.aborted) setError(err);
+      .catch((err: unknown) => {
+         if (!controller.signal.aborted) setError(toAPIError(err, '加载候选关联失败'));
       });
 
     return () => {
@@ -92,10 +94,9 @@ export default function ComparePage({ capabilities }: { capabilities: Capabiliti
          });
          if (!controller.signal.aborted && candidateId === res.candidate_id) setData(res);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       if (!controller.signal.aborted) {
-         if (err instanceof APIError) setError(err);
-         else setError(new APIError('CLIENT_ERROR', 'Network error', ''));
+         setError(toAPIError(err, '提交核验失败'));
       }
     } finally {
       if (!controller.signal.aborted) setSubmitting(false);
@@ -135,7 +136,7 @@ export default function ComparePage({ capabilities }: { capabilities: Capabiliti
                   {searchData.query_summary.type === 'image' && (
                     <div>
                        <p><span className="font-semibold">上传图片：</span> 原始图片无法恢复预览，文件属性：</p>
-                       <p>文件名: {searchData.query_summary.filename}</p>
+                       <p>文件名: {searchData.query_summary.filename ?? '未提供'}</p>
                        <p>MIME: {searchData.query_summary.mime_type}</p>
                        <p>字节大小: {searchData.query_summary.byte_size}</p>
                     </div>
@@ -170,8 +171,8 @@ export default function ComparePage({ capabilities }: { capabilities: Capabiliti
            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-gray-600">
              <div>
                <p className="font-medium">基础分值:</p>
-               {['sv', 'st', 'sr', 'sf', 'sg', 'se', 'u_model'].map(key => {
-                  const val = data.score_components[key as keyof typeof data.score_components];
+               {SCORE_COMPONENT_KEYS.map(key => {
+                  const val = data.score_components[key];
                   return <div key={key}>{key}: {typeof val === 'number' ? val.toFixed(2) : 'N/A'}</div>;
                })}
              </div>
@@ -184,16 +185,16 @@ export default function ComparePage({ capabilities }: { capabilities: Capabiliti
              <div>
                <p className="font-medium">可靠性 & 权重 (Reliability/Weights):</p>
                {Object.entries(data.score_components.reliability || {}).map(([k, v]) => (
-                 <div key={k}>{k} 可靠性: {(v as number).toFixed(2)}</div>
+                 <div key={k}>{k} 可靠性: {v.toFixed(2)}</div>
                ))}
                {Object.entries(data.score_components.weights || {}).map(([k, v]) => (
-                 <div key={k}>{k} 权重: {(v as number).toFixed(2)}</div>
+                 <div key={k}>{k} 权重: {v.toFixed(2)}</div>
                ))}
              </div>
              <div>
                <p className="font-medium">贡献值 (Contributions):</p>
                {Object.entries(data.score_components.contributions || {}).map(([k, v]) => (
-                 <div key={k}>{k}: {(v as number).toFixed(2)}</div>
+                 <div key={k}>{k}: {v.toFixed(2)}</div>
                ))}
              </div>
            </div>

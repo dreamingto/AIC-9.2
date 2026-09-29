@@ -118,7 +118,7 @@ export type QuerySummaryText = z.infer<typeof QuerySummaryTextSchema>;
 
 export const QuerySummaryImageSchema = z.object({
   type: z.literal("image"),
-  filename: z.string(),
+  filename: z.string().nullable(),
   mime_type: z.string(),
   byte_size: z.number(),
 });
@@ -235,7 +235,7 @@ export const APIErrorEnvelopeSchema = z.object({
     code: z.string(),
     message: z.string(),
     request_id: z.string(),
-    details: z.record(z.string(), z.unknown()).optional(),
+    details: z.record(z.string(), z.unknown()),
   })
 });
 export type APIErrorEnvelope = z.infer<typeof APIErrorEnvelopeSchema>;

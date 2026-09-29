@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchAPI } from '../api/client';
+import { fetchAPI, getErrorMessage } from '../api/client';
 import { BookSummarySchema, EditionSummarySchema } from '../types';
 import type { BookSummary, EditionSummary } from '../types';
 import { z } from 'zod';
@@ -49,7 +49,7 @@ export default function SourcesPage() {
         }
       } catch (err: unknown) {
         if (!controller.signal.aborted) {
-          setError((err as Error).message || '获取文献来源错误');
+          setError(getErrorMessage(err, '获取文献来源错误'));
         }
       } finally {
         if (!controller.signal.aborted) setLoading(false);

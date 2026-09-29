@@ -8,13 +8,15 @@
 - Vite
 - Tailwind CSS v4
 - React Router DOM
-- Vitest & React Testing Library (测试)
+- Zod（API 运行时契约）
+- Vitest、React Testing Library、MSW（组件与契约测试）
+- Playwright（全栈浏览器 E2E）
 
 ## 本地开发启动
 
 在 `frontend` 目录下运行：
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 将启动 Vite 开发服务器，`/api` 代理转发到 `http://localhost:8000`，需确保后端已在运行。
@@ -22,9 +24,17 @@ npm run dev
 ## 构建与测试
 ```bash
 npm run build # 生产构建
-npm run test  # 自动化测试
+npm run test -- --run # 组件与契约测试
 npm run lint  # 代码风格检查
 ```
+
+完整三服务已启动时运行浏览器 E2E：
+
+```bash
+npm run test:e2e
+```
+
+Playwright 默认访问 `http://127.0.0.1` 并使用本机 Chrome，覆盖来源读取、文本检索与核验、图片上传和区域搜索。
 
 ## Docker Compose 启动
 

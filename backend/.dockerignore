@@ -7,3 +7,5 @@ __pycache__/
 .ruff_cache/
 .env
 tests/
+data/assets/real_pilot_v1/
+data/processed/real_pilot_v1/

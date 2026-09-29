@@ -39,7 +39,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/data:/app/data
+      - ./backend/data/manifests:/app/data/manifests:ro
+      - ./backend/data/assets/fixture_v1:/app/data/assets/fixture_v1:ro
     command: >-
       sh -c "alembic upgrade head &&
       uvicorn app.main:app --host 0.0.0.0 --port 8000"
@@ -59,7 +60,7 @@ services:
         condition: service_healthy
         required: true
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost/ || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5

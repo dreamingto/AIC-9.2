@@ -16,3 +16,4 @@ backend/data/processed/*
 !backend/data/processed/.gitkeep
 postgres-data/
 *.log
+backend/data/real_pilot/ocr_results.json

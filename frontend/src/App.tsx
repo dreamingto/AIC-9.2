@@ -6,7 +6,7 @@ import FigurePage from './pages/FigurePage';
 import ComparePage from './pages/ComparePage';
 import SourcesPage from './pages/SourcesPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { fetchAPI } from './api/client';
+import { fetchAPI, getErrorMessage } from './api/client';
 import type { CapabilitiesResponse } from './types';
 import { CapabilitiesResponseSchema } from './types';
 
@@ -17,7 +17,7 @@ function App() {
   useEffect(() => {
     fetchAPI<CapabilitiesResponse>('/api/v1/capabilities', { schema: CapabilitiesResponseSchema })
       .then(setCapabilities)
-      .catch(err => setError(err.message || '获取配置失败'));
+      .catch((error: unknown) => setError(getErrorMessage(error, '获取配置失败')));
   }, []);
 
   if (error) {

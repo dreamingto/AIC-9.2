@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SearchResponseSchema } from '../types';
 import type { SearchResponse, CapabilitiesResponse } from '../types';
-import { fetchAPI, APIError } from '../api/client';
+import { fetchAPI, APIError, isAbortError, toAPIError } from '../api/client';
+
+const SCORE_COMPONENT_KEYS = ['sv', 'st', 'sr', 'sf', 'sg', 'se', 'u_model'] as const;
 
 export default function SearchPage({ capabilities }: { capabilities: CapabilitiesResponse }) {
   const [mode, setMode] = useState<'text' | 'image' | 'region'>('text');
@@ -65,37 +67,48 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
 
         await new Promise<void>((resolve, reject) => {
            const img = new Image();
+           const objectUrl = URL.createObjectURL(file);
+           let settled = false;
+
            const cleanup = () => {
+              controller.signal.removeEventListener('abort', handleAbort);
               img.onload = null;
               img.onerror = null;
-              URL.revokeObjectURL(img.src);
+              URL.revokeObjectURL(objectUrl);
               img.src = '';
            };
-
-           controller.signal.addEventListener('abort', () => {
+           const settle = (callback: () => void) => {
+              if (settled) return;
+              settled = true;
               cleanup();
-              reject(new Error('aborted'));
-           }, { once: true });
+              callback();
+           };
+           const handleAbort = () => {
+              settle(() => reject(new DOMException('Request aborted', 'AbortError')));
+           };
+
+           controller.signal.addEventListener('abort', handleAbort, { once: true });
 
            img.onload = () => {
-              if (controller.signal.aborted) { cleanup(); return; }
-              if (img.width * img.height > capabilities.upload_limits.max_image_pixels) {
-                 cleanup();
-                 reject(new Error(`图片像素数超过上限 ${capabilities.upload_limits.max_image_pixels}`));
+              if (controller.signal.aborted) {
+                 handleAbort();
+              } else if (img.width * img.height > capabilities.upload_limits.max_image_pixels) {
+                 settle(() => reject(new Error(`图片像素数超过上限 ${capabilities.upload_limits.max_image_pixels}`)));
               } else {
-                 cleanup();
-                 resolve();
+                 settle(resolve);
               }
            };
            img.onerror = () => {
-              if (controller.signal.aborted) { cleanup(); return; }
-              cleanup();
-              reject(new Error('无法读取图片尺寸'));
+              if (controller.signal.aborted) {
+                 handleAbort();
+              } else {
+                 settle(() => reject(new Error('无法读取图片尺寸')));
+              }
            };
-           img.src = URL.createObjectURL(file);
+           img.src = objectUrl;
         });
 
-        if (controller.signal.aborted) throw new Error('aborted');
+        if (controller.signal.aborted) throw new DOMException('Request aborted', 'AbortError');
 
         const formData = new FormData();
         formData.append('file', file);
@@ -135,10 +148,9 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
         if (!controller.signal.aborted) setData(res);
       }
     } catch (err: unknown) {
-      if ((err as Error).message === 'aborted' || (err as Error).name === 'AbortError') return;
+      if (isAbortError(err)) return;
       if (!controller.signal.aborted) {
-        if (err instanceof APIError) setError(err);
-        else setError(new APIError('CLIENT_ERROR', (err as Error).message, ''));
+        setError(toAPIError(err, '检索失败'));
       }
     } finally {
       if (!controller.signal.aborted) setLoading(false);
@@ -252,8 +264,8 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
                   <div className="text-xs text-gray-500 mb-2">
                     <span className="block mb-1">缺失模态: {result.score_components.missing_modalities?.length > 0 ? result.score_components.missing_modalities.join(', ') : '无'}</span>
                     <div className="grid grid-cols-4 gap-1">
-                      {['sv', 'st', 'sr', 'sf', 'sg', 'se', 'u_model'].map(key => {
-                        const val = result.score_components[key as keyof typeof result.score_components];
+                      {SCORE_COMPONENT_KEYS.map(key => {
+                        const val = result.score_components[key];
                         return (
                           <span key={key} className="bg-gray-100 px-1 py-0.5 rounded truncate" title={key}>
                              {key}: {typeof val === 'number' ? val.toFixed(2) : 'N/A'}
