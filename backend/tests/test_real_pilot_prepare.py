@@ -7,7 +7,11 @@ from PIL import Image
 
 import scripts.prepare_real_pilot as prepare_module
 from app.core.errors import DomainError
-from app.retrieval.providers.ocr import UnavailableOCRProvider, _box_from_points
+from app.retrieval.providers.ocr import (
+    UnavailableOCRProvider,
+    _box_from_points,
+    _normalize_paddle_result,
+)
 from scripts.prepare_real_pilot import (
     RealPilotPreparationError,
     _load_sources,
@@ -63,3 +67,21 @@ def test_unavailable_ocr_is_explicit() -> None:
 
 def test_paddle_boxes_normalize_to_xyxy() -> None:
     assert _box_from_points([[5, 8], [1, 8], [1, 2], [5, 2]]) == (1.0, 2.0, 5.0, 8.0)
+
+
+def test_paddle_v3_result_object_normalizes_json_payload() -> None:
+    class FakeResult:
+        json = {
+            "res": {
+                "rec_texts": ["天工开物", ""],
+                "rec_scores": [0.875, 0.0],
+                "rec_boxes": [[5, 8, 105, 48], [0, 0, 1, 1]],
+            }
+        }
+
+    lines = _normalize_paddle_result([FakeResult()])
+
+    assert len(lines) == 1
+    assert lines[0].text == "天工开物"
+    assert lines[0].confidence == 0.875
+    assert lines[0].bbox == (5.0, 8.0, 105.0, 48.0)

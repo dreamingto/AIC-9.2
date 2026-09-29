@@ -1,5 +1,12 @@
 # 变更记录
 
+## 2026-09-29
+
+- 安装并锁定独立 Windows CPU OCR 环境：Python 3.12.14、PaddlePaddle 3.0.0、PaddleOCR 3.0.3、PaddleX 3.0.3。
+- Provider 显式使用 PP-OCRv5 mobile detection/recognition 模型，兼容 PaddleOCR 3.x `OCRResult.json`、NumPy 坐标和 Windows 中文路径。
+- 通过 `127.0.0.1:7890` 完成模型下载和首张真实页面 raw OCR smoke；过滤空白检测框后生成 39 条有效 raw OCR 行、192 个字符，保持 `corrected_text=null`、`review_state=unreviewed` 和 `evaluation_status=not_evaluated`。
+- 新增 `backend/requirements-ocr.lock`；OCR 环境与默认后端依赖、Docker 镜像和数据库导入保持隔离。
+
 ## 2026-09-04
 
 - 完成 V1.1-A 演示可靠性增量：前端 API 边界 Zod 契约、统一错误转换、AbortError 与跨路由竞态隔离。

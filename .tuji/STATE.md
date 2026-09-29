@@ -55,5 +55,12 @@
 
 - 已从 Wikimedia Commons / National Archives of Japan 登记并下载《天工开物》第二册（28 页）和《农政全书》第一册（79 页）。来源 URL、Commons SHA-1、本地 SHA-256、字节数、页数和许可字段已写入 `backend/data/real_pilot/sources.json`。
 - 已运行 `backend/scripts/prepare_real_pilot.py`，完成首批 28 页 PNG 渲染并生成 `backend/data/real_pilot/derived_pages.json`；页面 `layout.status=pending_review`，OCR `status=pending_provider`。
-- 新增 `backend/data/real_pilot/annotation_schema.json` 和可选 `PaddleOCRProvider` 契约。未安装 OCR runtime 时显式返回 `MODEL_UNAVAILABLE`。
-- 原始 PDF/渲染 PNG 未纳入 Git；真实数据尚未导入 Page/Figure/TextChunk，也未开始真实 OCR 或效果评测。
+- 新增 `backend/data/real_pilot/annotation_schema.json` 和可选 `PaddleOCRProvider` 契约；独立 OCR 环境已锁定为 Python 3.12.14、PaddlePaddle 3.0.0、PaddleOCR 3.0.3、PaddleX 3.0.3 和 PP-OCRv5 mobile 模型。
+- 原始 PDF/渲染 PNG 未纳入 Git；真实数据尚未批量导入 Page/Figure/TextChunk，首张 raw OCR smoke 已完成，效果评测仍未开始。
+
+## V1.1-B OCR 基线（2026-09-29）
+
+- OCR 依赖独立锁文件为 `backend/requirements-ocr.lock`，不污染 `backend/.venv`，不进入默认后端 Docker 镜像。
+- 通过 `127.0.0.1:7890` 下载并缓存 PP-OCRv5 mobile 检测/识别模型；`backend/scripts/run_real_pilot_ocr.py --limit 1` 成功生成首张页面 raw OCR。
+- 首张页面输出 39 条有效 raw OCR 行、192 个字符，Provider 元数据为 `paddleocr / PP-OCRv5_mobile / 3.0.3`；`corrected_text=null`、`review_state=unreviewed`、`evaluation_status=not_evaluated`。
+- Provider 增加 PaddleOCR 3.x `OCRResult.json`、NumPy 坐标和 Windows 中文路径兼容；OCR 结果仍未导入数据库，尚未人工校订或评测 CER/WER。

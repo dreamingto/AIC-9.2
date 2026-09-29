@@ -17,3 +17,4 @@ backend/data/processed/*
 postgres-data/
 *.log
 backend/data/real_pilot/ocr_results.json
+backend/tmp/ocr-wheel-probe/

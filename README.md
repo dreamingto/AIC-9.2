@@ -124,13 +124,13 @@ npm run test:e2e
 
 ## V1.1-B 真实古籍试点进展
 
-2026-09-04 已完成首批真实来源登记和页面准备：
+2026-09-29 已完成首批真实来源登记、页面准备和 PaddleOCR 单页基线试跑：
 
 - 《天工开物》第二册：28 页，作为首批 OCR/版面标注试点。
 - 《农政全书》第一册：79 页，已下载并完成来源登记，待逐页审查后再纳入标注。
 - 两份原始 PDF 均来自 Wikimedia Commons 的 National Archives of Japan 扫描，文件页元数据显示为 Public domain；来源链接、Commons SHA-1、本地 SHA-256、页数和字节数记录在 `backend/data/real_pilot/sources.json`。
 - `backend/scripts/prepare_real_pilot.py` 已将首批 28 页渲染为 PNG，并生成 `backend/data/real_pilot/derived_pages.json`。渲染图位于被 Git 忽略的 `backend/data/processed/real_pilot_v1/`，不会随代码提交；`backend/.dockerignore` 也排除真实 PDF 和渲染图，避免进入后端镜像。
-- 页面库存仅包含尺寸、哈希、来源和待标注占位字段；尚未完成 OCR、版面/图题/功能标注或真实检索评测，`evaluation_status` 保持 `not_evaluated`。
+- 页面库存仍包含尺寸、哈希、来源和待标注占位字段；版面/图题/功能标注和真实检索评测尚未完成，`evaluation_status` 保持 `not_evaluated`。
 
 准备命令：
 
@@ -145,10 +145,24 @@ python backend/scripts/prepare_real_pilot.py --source-id commons-najda-nongzheng
 
 ### 运行真实 OCR
 
-页面库存准备完成后，安装并固定经过选型的 OCR 运行时，再执行：
+OCR 运行时保持在仓库外的独立 Windows CPU 环境，不加入 `backend/.venv` 或后端 Docker 镜像。当前锁定组合为：
+
+- Python 3.12.14
+- `paddlepaddle==3.0.0`
+- `paddleocr==3.0.3`
+- `paddlex==3.0.3`
+- `PP-OCRv5_mobile_det` + `PP-OCRv5_mobile_rec`
+
+完整传递依赖锁定在 `backend/requirements-ocr.lock`。使用 `127.0.0.1:7890` 代理下载模型后执行：
 
 ```powershell
-python backend/scripts/run_real_pilot_ocr.py --limit 1
+$env:PYTHONPATH = "D:\codex-project\比赛\9.2\backend"
+$env:PADDLE_PDX_MODEL_SOURCE = "BOS"
+$env:PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK = "True"
+$env:HTTP_PROXY = "http://127.0.0.1:7890"
+$env:HTTPS_PROXY = "http://127.0.0.1:7890"
+& "D:\codex-runtime\jitu-paddleocr-3.0.3\Scripts\python.exe" `
+  backend/scripts/run_real_pilot_ocr.py --limit 1
 ```
 
-当前环境未安装 PaddleOCR，因此命令会返回 `MODEL_UNAVAILABLE` 并且不会生成伪造文本。安装后命令将按页面库存写入 raw OCR 行、像素坐标、置信度、Provider/模型版本、预处理哈希和输入图像哈希；`corrected_text` 始终留空，待人工逐字校订。
+已完成首张《天工开物》页面 smoke：生成 39 条有效 raw OCR 行、192 个字符，Provider 元数据为 `paddleocr / PP-OCRv5_mobile / 3.0.3`。结果写入被 Git 忽略的 `backend/data/real_pilot/ocr_results.json`；raw OCR 是机器推断，`corrected_text` 仍为 `null`，待人工逐字校订，不能据此宣称 OCR 质量或历史结论。

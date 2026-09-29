@@ -29,7 +29,7 @@ PDF 魔数、字节数、Commons SHA-1 和本地 SHA-256。重复执行会校验
 - 《天工开物 2》共 28 页，作为第一批 20-50 页 OCR/版面标注试点。
 - 《农政全书 1》共 79 页，作为第二来源保留；完成逐页图像审查后再选择技术图页面。
 
-两个文件都是真实馆藏扫描，但当前尚未完成 OCR、页面标注或检索效果评估；
+两个文件都是真实馆藏扫描；页面标注和检索效果评估仍未完成，OCR 仅完成首张页面的 raw smoke；
 `evaluation_status` 必须保持为 `not_evaluated`。
 
 ## 页面准备
@@ -45,3 +45,25 @@ python backend/scripts/prepare_real_pilot.py
 `annotation_schema.json` 是人工标注模板，要求保留 layout 区域、阅读顺序、raw OCR、corrected text、行坐标、置信度、输入哈希和修改轨迹。未安装 PaddleOCR 时，后端的可选 Provider 明确返回 `MODEL_UNAVAILABLE`。
 
 Docker 构建默认排除 `data/assets/real_pilot_v1/` 和 `data/processed/real_pilot_v1/`，原始扫描和渲染图仅保留在本地受控目录。
+
+## PaddleOCR 运行时
+
+OCR 运行时是仓库外的独立 Windows x64 CPU 环境，不加入默认后端虚拟环境，也不进入 Docker 镜像。当前锁定：
+
+```text
+Python 3.12.14
+paddlepaddle==3.0.0
+paddleocr==3.0.3
+paddlex==3.0.3
+PP-OCRv5_mobile_det
+PP-OCRv5_mobile_rec
+```
+
+完整依赖写入 `backend/requirements-ocr.lock`。推荐使用 `PADDLE_PDX_MODEL_SOURCE=BOS`，通过本地代理下载模型。受控入口为：
+
+```powershell
+& "D:\codex-runtime\jitu-paddleocr-3.0.3\Scripts\python.exe" `
+  backend/scripts/run_real_pilot_ocr.py --limit 1
+```
+
+该命令只生成 `backend/data/real_pilot/ocr_results.json` 中的机器 raw OCR，保留输入哈希、逐行 bbox、confidence、Provider 版本和耗时；不填写 `corrected_text`，不改变人工 `review_state`，不把 OCR 转录核验等同于文献或传承关系核验。

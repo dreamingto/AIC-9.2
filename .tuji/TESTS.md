@@ -50,6 +50,14 @@
 
 - `python scripts/run_real_pilot_ocr.py --limit 1`：按预期失败并输出 OCR runtime 未安装；该失败是能力边界检查，不是静默降级。
 
+## 2026-09-29 OCR 运行时验收
+
+- 独立环境版本：Python 3.12.14、`paddlepaddle==3.0.0`、`paddleocr==3.0.3`、`paddlex==3.0.3`；`pip check` 通过。
+- PP-OCRv5 mobile detection/recognition 模型通过 `127.0.0.1:7890` 下载并缓存成功。
+- `python backend/scripts/run_real_pilot_ocr.py --limit 1`：退出码 0，生成 1 页、39 条有效 raw OCR 行、192 个字符；输出 Provider 为 `paddleocr / PP-OCRv5_mobile / 3.0.3`。
+- OCR 输出检查：`corrected_text` 为 null、`review_state=unreviewed`、`evaluation_status=not_evaluated`；没有覆盖人工校订字段。
+- 运行时锁文件：`backend/requirements-ocr.lock`；未修改 `backend/requirements.lock`，未将 OCR 大依赖加入 Docker 镜像。
+
 - `docker compose build backend`：通过；构建上下文由约 111 MB 降至约 16 KB，确认真实 PDF 与渲染 PNG 未进入镜像。重建并重启后端后 `/api/v1/health` 返回 200，容器 healthy。
 
 - V1.1-B 镜像重建后再次运行 `backend/scripts/smoke_fullstack.py`：通过；3 books、文本/图片/区域检索、幂等导入、核验持久化和 allowed/restricted 许可检查均正常，Provider 5 个，结果 `not_evaluated`。
