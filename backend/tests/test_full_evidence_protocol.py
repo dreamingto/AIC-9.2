@@ -1,5 +1,8 @@
+import hashlib
 import json
 from pathlib import Path
+
+import pytest
 
 from app.retrieval.experiments.contracts import EvidencePlan, QueryProtocol
 
@@ -26,3 +29,14 @@ def test_full_coverage_remains_ai_only_and_keeps_frozen_queries() -> None:
     lock_path = data.parents[2] / "release/domestic-data.lock.json"
     lock = json.loads(lock_path.read_text(encoding="utf-8"))
     assert lock["figures"] == 12 and not lock["models_included"]
+
+
+@pytest.mark.parametrize("relative", [
+    "backend/data/real_pilot/sources.json",
+    "backend/data/real_pilot/domestic_ai_selection.json",
+])
+def test_checkout_registry_bytes_match_frozen_restore_inputs(relative: str) -> None:
+    root = Path(__file__).parents[2]
+    lock = json.loads((root / "release/domestic-data.lock.json").read_text(encoding="utf-8"))
+    expected = next(entry["sha256"] for entry in lock["files"] if entry["path"] == relative)
+    assert hashlib.sha256((root / relative).read_bytes()).hexdigest() == expected

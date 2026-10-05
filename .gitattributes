@@ -1,0 +1,8 @@
+# These files participate in frozen input, model or implementation hashes.
+# Preserve their exact authoring bytes in Git archives and platform checkouts.
+/backend/data/real_pilot/sources.json -text whitespace=cr-at-eol
+/backend/data/real_pilot/domestic_ai_selection.json -text whitespace=cr-at-eol
+/backend/data/experiments/*.json -text whitespace=cr-at-eol
+/backend/model_runtime/models.lock.json -text whitespace=cr-at-eol
+/backend/app/**/*.py -text whitespace=cr-at-eol
+/backend/scripts/run_domestic_comparison.py -text whitespace=cr-at-eol
