@@ -1,0 +1,21 @@
+{
+  "release": "v1.2.0-competition-preview",
+  "url": "https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.0-competition-preview",
+  "source_commit": "86edec6c37385997b41b9b7dc51a0f3e8121b98d",
+  "ci_url": "https://github.com/dreamingto/AIC-9.2/actions/runs/37307763298",
+  "ci_status": "success",
+  "backend_tests": 255,
+  "frontend_tests": 13,
+  "local_chrome_tests": 10,
+  "research_metrics": "not_evaluated",
+  "team_identity": "pending",
+  "assets": [
+    {"name":"jitu-source-v1.2.zip","bytes":705060,"sha256":"9eedc3dcc2effe27e9816950eda8bae150d66abe06e69e09df5d73fe085b9f2c","api_id":612496982},
+    {"name":"jitu-domestic-34033a592c974cd7.zip","bytes":48587383,"sha256":"e108e27390b3b1200e7eeb314a2905e38ff609061bba8f58b67a725de8d1080e","api_id":612484183},
+    {"name":"jitu-competition-v1.2-preview.zip","bytes":12609618,"sha256":"54860044fa85deaadffed693081f22b1f18c0459243dc9ea96806bd291be2863","api_id":612489254},
+    {"name":"jitu-technical-report-v1.2.pdf","bytes":1979933,"sha256":"87f21824b94ca657db3ec159da9e6b40c25f171c3dcbf0297b65a39c7ce47a6e","api_id":612479964},
+    {"name":"jitu-slides-v1.2.pdf","bytes":1625413,"sha256":"5e9624222a9a8b0f1ac939353f9bd31ecd01cfb013c7118021189039a7d84237","api_id":612489253},
+    {"name":"jitu-demo-v1.2.mp4","bytes":8171940,"sha256":"d43efe6e5d7511be17a10b9ca958c02746a8b33e0512d3cc542498a02c32fb62","api_id":612489260},
+    {"name":"competition-package.lock.json","bytes":175,"sha256":"8a009ed03f61de58b1e2e26f30164ead121fab045481f04c78e64d0c72ee1139","api_id":612489258}
+  ]
+}

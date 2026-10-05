@@ -82,6 +82,8 @@ GitHub Actions含前后端检查和独立PG迁移/集成。后端生成frontend/
 
 ## 文档与材料
 
+[V1.2 发布与下载](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.0-competition-preview) 已提供完整源码包、冻结国内数据恢复包、匿名预审材料包和独立 PDF/MP4。代码提交与通过的在线 CI、各资产 SHA256 见 [发布记录](release/publication.json)。正式参赛团队信息与百度网盘/报名系统提交仍需参赛者办理。
+
 - [当前架构与需求](docs/机图索隐_当前架构与需求_V1.2.md)
 - [审查及修复记录](docs/机图索隐_项目与Git完整性审查_2026-10-05.md)
 - [固定查询V1](docs/机图索隐_固定查询算法对照与功能证据草稿.md)：历史结果，新报告独立生成。

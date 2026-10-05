@@ -6,7 +6,7 @@
 
 默认比较使用domestic-queries-v2/domestic-functions-v2；24开发输入不变，12图草稿覆盖且区域主张限制框内。最终业务运行retrieval_comparison/253b7b50c756cf58/20261005T115134Z-f679af8a，独立恢复运行D:/codex-releases/AIC-9.2/repro-comparison/253b7b50c756cf58/20261005T115326Z-82c7bf63，两者176签名同。V1历史不可覆盖。
 
-材料源码competition/，输出output/competition/。团队信息尚未收到，按匿名预审版交付。技术PDF、答辩PDF、真实操作MP4完成；正式提交需要团队编号/命名/百度网盘和报名系统操作，不自动替用户填写。暂不人工审核决定保持，不把草稿升级Verified，不造研究指标。Git同步与资产链接以随后发布记录为准。
+材料源码competition/，输出output/competition/。团队信息尚未收到，按匿名预审版交付。技术PDF、答辩PDF、真实操作MP4完成；正式提交需要团队编号/命名/百度网盘和报名系统操作，不自动替用户填写。暂不人工审核决定保持，不把草稿升级Verified，不造研究指标。公开发布v1.2.0-competition-preview冻结代码86edec6，线上CI37307763298成功，7资产与SHA在release/publication.json；源码包和国内数据包均已上传。
 
 ## 2026-10-05 当前交接：固定查询对照与功能草稿
 

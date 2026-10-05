@@ -6,7 +6,7 @@
 - 全量后端252 passed/3默认PGskip（独立库另跑3 passed）/2既有上游warning；88源文件Mypy/编译/Ruff/pip通过；前端13测试/lint/构建，npm audit 0。无私密.env新源码目录真实Compose构建，PG新卷0001/0002迁移、12图/88向量恢复；Chrome10 passed。
 - V2与恢复库均176适用/16不适用、528排名0失败/不稳定，全部176签名与指纹一致253b7b50c756cf580dfc50cfe7e806e3e8588872cf979b137704e23dad447999；4首项/8前K变化不是改善率。研究指标not_evaluated。
 - 已生成198字简介、技术/答辩PDF各8页、HTML与讲稿、真实Chrome系统操作MP4约4:41。正式团队名/编号未知，当前匿名预审版；比赛系统/百度网盘提交未代办。材料源码competition/，产物output/competition/。
-- 业务服务已按修复代码重建healthy，仍21图/169向量/14合成核验；真实核验0。独立测试和录制作用于恢复库。Git同步/独立发布资产正执行，最终发布结果另行记录。
+- 业务服务已按最终修复代码重建healthy，仍21图/169向量/14合成核验；真实核验0。独立测试和录制作用于恢复库。源码79c3f96与CI修复86edec6正常快进同步，exact tree/commit一致；线上CI37307763298成功，255后端/13前端。公开预审版tag v1.2.0-competition-preview冻结86edec6，7资产uploaded且摘要全同。发布记录release/publication.json。
 
 以下保留历史阶段状态；阅读时以最新记录为准。
 

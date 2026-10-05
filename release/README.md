@@ -1,5 +1,7 @@
 # 冻结国内数据与恢复流程
 
+已发布 [V1.2 比赛预审版](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.0-competition-preview)。从 Assets 下载 `jitu-source-v1.2.zip`（或克隆源码）和 `jitu-domestic-34033a592c974cd7.zip`，再执行下方恢复步骤。比赛材料另在 `jitu-competition-v1.2-preview.zip`；三个 PDF/视频也单独提供。代码冻结提交、线上 CI 和服务器资产摘要见 [publication.json](publication.json)，均已核对实际远程值。
+
 源码与锁文件在Git；原始扫描、OCR、模型权重及运行报告独立管理。当前输入包不包含.env、审核者身份、访问密钥、模型权重、搜索记录或核验记录。
 
 当前数据包：`jitu-domestic-34033a592c974cd7.zip`，48,587,383字节；SHA256与逐文件校验在[domestic-data.lock.json](domestic-data.lock.json)。本机保存于`D:/codex-releases/AIC-9.2/`。包含两个允许再分发来源的原PDF、8个选中扫描/备份、原库存/raw OCR、冻结manifest及88个基线/神经向量。AI文本、功能建议仍Inferred，研究指标not_evaluated。
@@ -52,4 +54,11 @@ Invoke-RestMethod ('http://localhost:8000/api/v1/ingestion/jobs/' + $job.id)
 
 V1输入与报告保留；V2保持24个查询和相同语料，扩展全部12图的有据AI草稿并修正局部证据范围，不称为独立测试集。权重通过`EAFR_WEIGHTS` JSON配置，变化产生新的实现/输入报告身份。
 
-原扫描发布依据冻结登记的许可字段和来源URL，保留水印及出处。数据包的代码外分发位置由发布记录登记；没有该包时只能复现synthetic工程版，不能声称恢复了固定国内实验。原有库存和raw OCR带时间戳，因此从PDF重新渲染/OCR会创建新指纹。
+原扫描发布依据冻结登记的许可字段和来源URL，保留水印及出处。没有数据包时只能复现synthetic工程版，不能声称恢复了固定国内实验。原有库存和raw OCR带时间戳，因此从PDF重新渲染/OCR会创建新指纹。
+
+如果本机到 github.com 的连接受阻，可用资产 API 下载（不需凭据）；下载慢时 curl 的 `-C -` 可以续传，下载完成再校验 SHA256，不能把 partial 文件用于恢复：
+
+```powershell
+curl.exe --noproxy '*' -fL -H 'Accept: application/octet-stream' -o jitu-domestic-34033a592c974cd7.zip https://api.github.com/repos/dreamingto/AIC-9.2/releases/assets/612484183
+Get-FileHash jitu-domestic-34033a592c974cd7.zip -Algorithm SHA256
+```
