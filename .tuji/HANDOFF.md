@@ -1,5 +1,13 @@
 # 交接
 
+## 2026-10-05 V1.2.1 最终交接
+
+下载修复源码v1.2.1-competition-preview/jitu-source-v1.2.1.zip，搭配原v1.2.0-competition-preview的数据与材料资产；不要用旧源码包恢复。源代码冻结fe93ebc，后续main文档增量不改变代码；.gitattributes参与冻结字节身份，不能擅自换行转换。严格恢复器不覆盖不同数据。
+
+真实Git归档恢复与24查询/8方法重放完成，176签名/全部重复/指纹/实现哈希与原业务实验一致；报告D:/codex-releases/AIC-9.2/public-source-replay/253b7b50c756cf58/20261005T123802Z-5afef73a。线上CI37310431347后端257/前端13；公开源码完整回读SHA一致。release/publication.json保存摘要和历史发布；docs修复交付记录保存验证范围。
+
+当前业务http://localhost/demo、8000/docs与GPU8767保持运行；复现测试环境停止且卷保留。团队信息、百度网盘/官方提交pending，暂不人工审核/指标not_evaluated不变。
+
 ## 2026-10-05 V1.2 最新交接
 
 修复/验收详情见docs/机图索隐_V1.2修复与交付记录.md。正常入口http://localhost/demo与8000/docs；模型8767 ready/cuda。scripts/start.ps1支持fixture/real/neural。新目录先按release/README.md恢复国内包、导入manifest、恢复88冻结向量，再启动neural；不把模型环境混入服务依赖。

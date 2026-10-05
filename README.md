@@ -1,6 +1,6 @@
 # 机图索隐：国内古籍证据感知检索
 
-当前比赛版V1.2：FastAPI/PostgreSQL/pgvector与React19/Nginx全栈，BGE-small-zh-v1.5中文文本、Chinese-CLIP视觉/中文图文、PaddleOCR raw、文本/图片/区域检索、来源证据与候选核验持久化。12幅国内真实图与9幅synthetic fixture分别标记；AI数据保持Inferred，研究指标not_evaluated。
+当前比赛版V1.2.1：FastAPI/PostgreSQL/pgvector与React19/Nginx全栈，BGE-small-zh-v1.5中文文本、Chinese-CLIP视觉/中文图文、PaddleOCR raw、文本/图片/区域检索、来源证据与候选核验持久化。12幅国内真实图与9幅synthetic fixture分别标记；AI数据保持Inferred，研究指标not_evaluated。
 
 真实内容以中华再造善本/国家图书馆出版社来源《耕织图》8图为主，国图馆藏《天工开物》4图补充。Commons是获取渠道，国内出版与馆藏分别记录。两个固定案例为织机及水碓/水磨；排名实际计算，没有硬编码期望名次。
 
@@ -82,7 +82,7 @@ GitHub Actions含前后端检查和独立PG迁移/集成。后端生成frontend/
 
 ## 文档与材料
 
-[V1.2 发布与下载](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.0-competition-preview) 已提供完整源码包、冻结国内数据恢复包、匿名预审材料包和独立 PDF/MP4。代码提交与通过的在线 CI、各资产 SHA256 见 [发布记录](release/publication.json)。正式参赛团队信息与百度网盘/报名系统提交仍需参赛者办理。
+[V1.2.1 源码下载](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.1-competition-preview) 修复 Git 换行转换与冻结哈希不一致问题；请使用 `jitu-source-v1.2.1.zip`。冻结国内数据恢复包、匿名预审材料包和独立 PDF/MP4 继续从 [V1.2.0 固定资产](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.0-competition-preview) 下载。真实 Git 源码归档恢复及 176 组排名重放全部一致，最新在线 CI 后端 257 / 前端 13 通过；提交与各资产 SHA256 见 [发布记录](release/publication.json)。正式参赛团队信息与百度网盘/报名系统提交仍需参赛者办理。
 
 - [当前架构与需求](docs/机图索隐_当前架构与需求_V1.2.md)
 - [审查及修复记录](docs/机图索隐_项目与Git完整性审查_2026-10-05.md)

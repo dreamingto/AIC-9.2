@@ -1,5 +1,12 @@
 # 测试记录
 
+## 2026-10-05 V1.2.1 真实源码归档复现（最新）
+
+- 新增2个登记文件精确字节回归；最新本地254 passed/3默认PGskip/2上游提醒，Ruff通过；独立PG3已另跑。CI37310431347成功，日志实查257 passed，前端13、迁移/类型/静态/审计/构建/契约通过。
+- Git源码归档（非复制工作文件）恢复24冻结文件，Compose无.env配置、模型锁SHA256及全部实现/协议哈希通过；保留严格不一致覆盖拒绝规则。Git归档重放528排名，176适用/16不适用、0失败/0不稳定；逐组比对176排名SHA及重复签名，无差异。
+- 重放报告public-source-replay/253b7b50c756cf58/20261005T123802Z-5afef73a/comparison.json SHA256为099e7282aae7dcb0cc8d42f62babef18a9cdeecb9656c5e3c4201762b06145d5。输入指纹253b7b50c756cf580dfc50cfe7e806e3e8588872cf979b137704e23dad447999。
+- V1.2.1公开源码API612538161无凭据完整回读710,112字节，SHA69cde1acab4ae08853e4d6b69a06be2385580bd16db8aa823fa66e6c315556e6，与本地/服务器全同。数据大包网络全量回读仍未完成，不改变此前partial说明。Chrome10及持久化验收沿用同业务实现的本轮真实结果。
+
 ## 2026-10-05 V1.2 修复验收（最新）
 
 - 后端252 passed/3默认PGskip/2上游弃用提醒；88源文件Mypy，compileall/Ruff/pip check通过。3 opt-in PG另在55432/tuji_reviewed_real_test实际3 passed。独立测试卷与实际数据恢复卷分开保留。

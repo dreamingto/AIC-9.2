@@ -1,6 +1,10 @@
 # 冻结国内数据与恢复流程
 
-已发布 [V1.2 比赛预审版](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.0-competition-preview)。从 Assets 下载 `jitu-source-v1.2.zip`（或克隆源码）和 `jitu-domestic-34033a592c974cd7.zip`，再执行下方恢复步骤。比赛材料另在 `jitu-competition-v1.2-preview.zip`；三个 PDF/视频也单独提供。代码冻结提交、线上 CI 和服务器资产摘要见 [publication.json](publication.json)，均已核对实际远程值。
+使用 [V1.2.1 修复版源码](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.1-competition-preview) 的 `jitu-source-v1.2.1.zip`（或克隆最新 main），搭配 [V1.2.0 固定数据与材料](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.0-competition-preview) 的 `jitu-domestic-34033a592c974cd7.zip`，再执行下方恢复步骤。比赛材料在后者的 `jitu-competition-v1.2-preview.zip`；技术 PDF、答辩 PDF 和视频也单独提供。代码冻结提交、线上 CI 和服务器资产摘要见 [publication.json](publication.json)，均已核对实际远程值。
+
+V1.2.1 修复了 Git checkout/archive 的 CRLF/LF 转换与冻结哈希不一致：参与来源、模型、协议和实现哈希的文件通过 `.gitattributes` 保留原字节。旧 `jitu-source-v1.2.zip` 已被此修复源码取代；旧 tag、数据包和材料包保留。真实 Git 源码归档已恢复全部 24 文件，重放 176 适用组合各三次、0 失败/不稳定，与原实验 176 组排名签名及输入/实现哈希全部相同。
+
+源码包 710,112 字节，SHA256 `69cde1acab4ae08853e4d6b69a06be2385580bd16db8aa823fa66e6c315556e6`；已从公开 API 无凭据完整下载并核对。
 
 源码与锁文件在Git；原始扫描、OCR、模型权重及运行报告独立管理。当前输入包不包含.env、审核者身份、访问密钥、模型权重、搜索记录或核验记录。
 
