@@ -12,7 +12,7 @@ jobs:
           POSTGRES_DB: tuji_reviewed_real_test
         ports: ['55432:5432']
         options: >-
-          --health-cmd 'pg_isready -U tuji -d tuji_reviewed_real_test'
+          --health-cmd "pg_isready -U tuji -d tuji_reviewed_real_test"
           --health-interval 5s --health-timeout 5s --health-retries 20
     env:
       TUJI_TEST_DATABASE_URL: postgresql+asyncpg://tuji:tuji@127.0.0.1:55432/tuji_reviewed_real_test
