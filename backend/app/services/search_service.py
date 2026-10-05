@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import io
 import logging
 import time
@@ -27,6 +28,7 @@ from app.db.models import (
 from app.domain.enums import SearchType, VerificationState
 from app.repositories.catalog import get_figure, get_page, list_figures_for_search
 from app.retrieval.baseline.bm25 import tokenize_zh
+from app.retrieval.evidence.spatial import scoped_region_context
 from app.retrieval.providers.registry import ProviderRegistry
 from app.retrieval.rerank.scoring import (
     EAFRWeights,
@@ -49,6 +51,7 @@ from app.schemas.common import (
 )
 from app.services.serializers import (
     asset_ref,
+    data_status,
     evidence_response,
     source_summary,
 )
@@ -88,16 +91,8 @@ class SearchService:
         weights: EAFRWeights | None = None,
     ) -> None:
         self.settings = settings
-        self.providers = providers or ProviderRegistry.create()
-        self.weights = weights or EAFRWeights(
-            beta_v=0.25,
-            beta_t=0.25,
-            beta_r=0.2,
-            beta_f=0.2,
-            beta_g=0.05,
-            lambda_e=0.1,
-            lambda_u=0.05,
-        )
+        self.providers = providers or ProviderRegistry.create(settings)
+        self.weights = weights or EAFRWeights(**settings.eafr_weights.model_dump())
 
     async def search_text(
         self, session: AsyncSession, request: TextSearchRequest
@@ -166,22 +161,10 @@ class SearchService:
         if not image_path.is_file():
             raise DomainError("INVALID_REGION_SOURCE", "区域来源图像文件不存在", 422)
         image_bytes = self._crop_image(image_path.read_bytes(), request.bbox)
-        query_assertions = [
-            {
-                "slot": assertion.slot,
-                "concept": assertion.concept,
-                "confidence": assertion.confidence,
-                "status": assertion.state,
-            }
-            for assertion in source_figure.assertions
-        ]
-        claims = self._claims_from_text(
-            " ".join(
-                [source_figure.title or ""]
-                + [chunk.corrected_text or chunk.text for chunk in source_figure.text_chunks]
-            ),
-            query_assertions,
+        scoped_text, query_assertions, scoped_relations = scoped_region_context(
+            source_figure, request.bbox.model_dump()
         )
+        claims = self._claims_from_text(scoped_text, query_assertions)
         return await self._run_search(
             session,
             QueryContext(
@@ -189,12 +172,14 @@ class SearchService:
                 text=None,
                 image_bytes=image_bytes,
                 query_assertions=query_assertions,
-                query_relations=[self._relation_dict(item) for item in source_figure.relations],
+                query_relations=scoped_relations,
                 claims=claims,
                 summary={
                     "type": "region",
                     "source_figure_id": str(source_figure.id),
                     "bbox": request.bbox.model_dump(),
+                    "coordinate_space": "normalized",
+                    "claim_scope": "spatial_supports_contained_in_crop",
                 },
             ),
             request.top_k,
@@ -224,16 +209,26 @@ class SearchService:
         bm25_scores = {hit.document_id: hit.score for hit in bm25_result.hits}
         max_bm25 = max(bm25_scores.values(), default=0.0)
         query_text_vector = (
-            self.providers.text_embedding.encode(query.text).vector if query.text else None
+            (await asyncio.to_thread(self.providers.text_embedding.encode_query, query.text)).vector
+            if query.text
+            else None
         )
         query_image_vector = (
-            self.providers.image_embedding.encode(query.image_bytes).vector
+            (
+                await asyncio.to_thread(self.providers.image_embedding.encode, query.image_bytes)
+            ).vector
             if query.image_bytes
+            else None
+        )
+        # Text/image cross-modal comparisons use ONLY the shared Chinese-CLIP space.
+        query_clip_vector = (
+            (await asyncio.to_thread(self.providers.clip_text.encode, query.text)).vector
+            if query.text and self.providers.clip_text
             else None
         )
         ranked: list[RankedCandidate] = []
         for figure in figures:
-            item = self._candidate_features(figure, embedding_map)
+            item = await asyncio.to_thread(self._candidate_features, figure, embedding_map)
             scores, matched_regions = self._component_scores(
                 query,
                 figure,
@@ -241,9 +236,12 @@ class SearchService:
                 query_text_vector,
                 query_image_vector,
                 bm25_scores.get(str(figure.id), 0.0) / max_bm25 if max_bm25 else 0.0,
+                query_clip_vector,
             )
             evidence_items = [self._evidence_dict(evidence) for evidence in figure.evidences]
-            evidence_score = evidence_coverage(query.claims, evidence_items)
+            evidence_score = (
+                evidence_coverage(query.claims, evidence_items) if query.claims else None
+            )
             uncertainty_score = self._candidate_uncertainty(figure)
             result = score_candidate(
                 scores,
@@ -253,7 +251,7 @@ class SearchService:
             )
             cfr_summary = {
                 "assertions": [self._assertion_dict(assertion) for assertion in figure.assertions],
-                "uncertainty": uncertainty_score,
+                "uncertainty": uncertainty_score if uncertainty_score is not None else 1.0,
             }
             material_missingness = self._material_missingness(figure)
             evidence_summary: dict[str, Any] = {
@@ -269,7 +267,8 @@ class SearchService:
                     cfr_summary=cfr_summary,
                     evidence_summary=evidence_summary,
                     uncertainty={
-                        "model": uncertainty_score,
+                        "model": uncertainty_score if uncertainty_score is not None else 1.0,
+                        "model_available": float(uncertainty_score is not None),
                         "material_missingness": material_missingness,
                     },
                     matched_regions=matched_regions,
@@ -278,12 +277,20 @@ class SearchService:
         ranked.sort(key=lambda item: (-item.score, str(item.figure.id)))
         ranked = ranked[:top_k]
         latency_ms = (time.perf_counter() - started) * 1000
-        versions = [health.as_dict() for health in self.providers.health()]
+        versions = [health.as_dict() for health in await asyncio.to_thread(self.providers.health)]
         version_map: dict[str, Any] = {str(metadata["provider"]): metadata for metadata in versions}
         session_record = SearchSession(
             search_type=query.search_type.value,
             query_summary=query.summary,
-            config={"weights": self.weights.as_dict(), "top_k": top_k},
+            config={
+                "weights": self.weights.as_dict(),
+                "scoring_policy_version": "eafr-v2-spatial",
+                "top_k": top_k,
+                "filters": filters.model_dump(mode="json"),
+                "retrieval_profile": self.settings.retrieval_profile,
+                "text_fusion": {"semantic": 0.7, "bm25": 0.3},
+                "cross_modal_space": "chinese_clip" if self.providers.clip_text else None,
+            },
             model_versions=version_map,
             latency_ms=latency_ms,
             status="completed",
@@ -384,6 +391,12 @@ class SearchService:
             return False
         if filters.edition_ids and figure.page.edition_id not in filters.edition_ids:
             return False
+        if (
+            filters.dataset_kinds
+            and figure.provenance.get("dataset_kind", "synthetic_fixture")
+            not in filters.dataset_kinds
+        ):
+            return False
         return True
 
     async def _embedding_map(
@@ -397,10 +410,29 @@ class SearchService:
             select(EmbeddingRecord).where(EmbeddingRecord.entity_id.in_(entity_ids))
         )
         records = result.scalars().all()
-        return {
-            (record.entity_type, record.entity_id, record.modality): list(record.vector)
-            for record in records
+        provider_map = {
+            "text": self.providers.text_embedding,
+            "image": self.providers.image_embedding,
+            "clip_text": self.providers.clip_text,
         }
+        compatible: dict[tuple[str, UUID, str], list[float]] = {}
+        for record in records:
+            provider = provider_map.get(record.modality)
+            if provider is None:
+                continue
+            metadata = provider.metadata()
+            if (
+                record.provider == metadata.provider
+                and record.model == metadata.model
+                and record.version == metadata.version
+                and record.dimension == metadata.dimension
+                and record.preprocessing_hash == metadata.preprocessing_hash
+                and len(record.vector) == metadata.dimension
+            ):
+                compatible[(record.entity_type, record.entity_id, record.modality)] = list(
+                    record.vector
+                )
+        return compatible
 
     def _candidate_features(
         self,
@@ -410,22 +442,64 @@ class SearchService:
         text = self._figure_text(figure)
         image_vector = embedding_map.get(("figure", figure.id, "image"))
         text_vector = embedding_map.get(("figure", figure.id, "text"))
+        clip_text_vector = embedding_map.get(("figure", figure.id, "clip_text"))
         region_vectors = [
             (region, embedding_map.get(("region", region.id, "image"))) for region in figure.regions
         ]
+        if self.providers.clip_text is not None:
+            if (
+                (text and (text_vector is None or clip_text_vector is None))
+                or (figure.asset is not None and image_vector is None)
+                or any(vector is None for _, vector in region_vectors)
+            ):
+                raise DomainError(
+                    "MODEL_UNAVAILABLE",
+                    "当前语料尚未完成所选模型的向量索引，请执行重建索引",
+                    503,
+                    {"reason": "compatible_index_missing", "figure_id": str(figure.id)},
+                )
+            return {
+                "text": text,
+                "image": image_vector,
+                "text_vector": text_vector,
+                "clip_text_vector": clip_text_vector,
+                "region_vectors": region_vectors,
+            }
         if text_vector is None:
             text_vector = list(self.providers.text_embedding.encode(text).vector)
         if image_vector is None and figure.asset is not None:
             path = resolve_safe_path(self.settings.asset_root, figure.asset.relative_path)
             if path.is_file():
                 try:
-                    image_vector = list(self.providers.image_embedding.encode(path).vector)
+                    image_input: Any = path
+                    if figure.provenance.get("dataset_kind") in {
+                        "human_reviewed_real_pilot",
+                        "ai_assisted_real_pilot",
+                    }:
+                        if (
+                            figure.bbox_x is None
+                            or figure.bbox_y is None
+                            or figure.bbox_width is None
+                            or figure.bbox_height is None
+                        ):
+                            raise ValueError("real figure has no confirmed extent")
+                        image_input = self._crop_image(
+                            path.read_bytes(),
+                            BBox(
+                                x=figure.bbox_x,
+                                y=figure.bbox_y,
+                                width=figure.bbox_width,
+                                height=figure.bbox_height,
+                            ),
+                        )
+                    image_vector = list(self.providers.image_embedding.encode(image_input).vector)
                 except Exception:
                     logger.warning("无法读取候选图像", extra={"request_id": "-"}, exc_info=True)
         return {
             "text": text,
             "image": image_vector,
             "text_vector": text_vector,
+            "clip_text_vector": None,
             "region_vectors": region_vectors,
         }
 
@@ -437,22 +511,28 @@ class SearchService:
         query_text_vector: Iterable[float] | None,
         query_image_vector: Iterable[float] | None,
         bm25_score: float,
+        query_clip_vector: Iterable[float] | None = None,
     ) -> tuple[dict[str, float | None], list[RegionResponse]]:
         sv: float | None = None
         st: float | None = None
         sr: float | None = None
         if query_image_vector is not None and item["image"] is not None:
             sv = cosine_to_unit(cosine_similarity(query_image_vector, item["image"]))
+        elif query_clip_vector is not None and item["image"] is not None:
+            sv = cosine_to_unit(cosine_similarity(query_clip_vector, item["image"]))
         if query_text_vector is not None and item["text_vector"] is not None:
             semantic = cosine_to_unit(cosine_similarity(query_text_vector, item["text_vector"]))
             st = 0.7 * semantic + 0.3 * bm25_score
+        elif query_image_vector is not None and item.get("clip_text_vector") is not None:
+            st = cosine_to_unit(cosine_similarity(query_image_vector, item["clip_text_vector"]))
         matched_regions: list[RegionResponse] = []
-        if query_image_vector is not None:
+        visual_query = query_image_vector if query_image_vector is not None else query_clip_vector
+        if visual_query is not None:
             scored_regions = []
             for region, vector in item["region_vectors"]:
                 if vector is not None:
                     scored_regions.append(
-                        (cosine_to_unit(cosine_similarity(query_image_vector, vector)), region)
+                        (cosine_to_unit(cosine_similarity(visual_query, vector)), region)
                     )
             scored_regions.sort(key=lambda pair: (-pair[0], str(pair[1].id)))
             if scored_regions:
@@ -498,7 +578,7 @@ class SearchService:
             if item.concept != "unknown"
         }
         if not query_map or not candidate_map:
-            return 0.0
+            return None
         keys = query_map.keys() | candidate_map.keys()
         numerator = sum(min(query_map.get(key, 0.0), candidate_map.get(key, 0.0)) for key in keys)
         denominator = sum(max(query_map.get(key, 0.0), candidate_map.get(key, 0.0)) for key in keys)
@@ -587,9 +667,9 @@ class SearchService:
         }
 
     @staticmethod
-    def _candidate_uncertainty(figure: Figure) -> float:
+    def _candidate_uncertainty(figure: Figure) -> float | None:
         scores = [float(assertion.confidence) for assertion in figure.assertions]
-        return model_uncertainty(scores) if scores else 1.0
+        return model_uncertainty(scores) if scores else None
 
     @staticmethod
     def _material_missingness(figure: Figure) -> float:
@@ -624,15 +704,22 @@ class SearchService:
             evidence=[evidence_response(evidence) for evidence in item.figure.evidences],
             uncertainty=item.uncertainty,
             verification_state=VerificationState.PENDING,
+            title=item.figure.title,
+            data_status=data_status(item.figure),
         )
 
     def _stored_result(self, candidate: AssociationCandidate, search_id: UUID) -> SearchResult:
-        matched_ids = set(candidate.evidence_summary.get("matched_region_ids", []))
-        regions = [
-            RegionResponse.model_validate(region)
-            for region in candidate.figure.regions
-            if not matched_ids or str(region.id) in matched_ids
-        ][:3]
+        matched_ids = candidate.evidence_summary.get("matched_region_ids", [])
+        regions_by_id = {str(r.id): r for r in candidate.figure.regions}
+        regions = (
+            [
+                RegionResponse.model_validate(regions_by_id[region_id])
+                for region_id in matched_ids
+                if region_id in regions_by_id
+            ][:3]
+            if matched_ids
+            else [RegionResponse.model_validate(region) for region in candidate.figure.regions[:3]]
+        )
         assertions = [
             FunctionalAssertionResponse.model_validate(value)
             for value in candidate.cfr_summary.get("assertions", [])
@@ -652,6 +739,8 @@ class SearchService:
             evidence=[evidence_response(evidence) for evidence in candidate.figure.evidences],
             uncertainty={key: float(value) for key, value in candidate.uncertainty.items()},
             verification_state=VerificationState(candidate.verification_state),
+            title=candidate.figure.title,
+            data_status=data_status(candidate.figure),
         )
 
     @staticmethod

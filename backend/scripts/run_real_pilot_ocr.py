@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +45,16 @@ def _load_inventory(path: Path = INVENTORY_PATH) -> dict[str, Any]:
     pages = payload.get("pages")
     if not isinstance(pages, list) or not pages:
         raise RealPilotOCRError("page inventory has no pages")
+    ids: set[str] = set()
+    for page in pages:
+        if not isinstance(page, dict) or not all(
+            isinstance(page.get(key), str) and page[key]
+            for key in ("page_id", "source_id", "image_path", "sha256")
+        ):
+            raise RealPilotOCRError("invalid page record in inventory")
+        if page["page_id"] in ids:
+            raise RealPilotOCRError("duplicate page_id in inventory")
+        ids.add(page["page_id"])
     return payload
 
 
@@ -92,12 +103,21 @@ def run_ocr(
     inventory_path: Path = INVENTORY_PATH,
     output_path: Path = OUTPUT_PATH,
     provider: OCRProvider | None = None,
+    resume: bool = False,
+    progress: Callable[[dict[str, Any]], None] | None = None,
 ) -> dict[str, Any]:
+    if inventory_path.resolve() != INVENTORY_PATH.resolve() and (
+        output_path.resolve() == OUTPUT_PATH.resolve()
+    ):
+        raise RealPilotOCRError("alternate inventory requires a separate --output")
+    if output_path.resolve() == inventory_path.resolve():
+        raise RealPilotOCRError("OCR output must not overwrite inventory")
     inventory = _load_inventory(inventory_path)
+    known_ids = {page["page_id"] for page in inventory["pages"]}
+    if page_ids and (unknown := page_ids - known_ids):
+        raise RealPilotOCRError(f"unknown page IDs: {', '.join(sorted(unknown))}")
     pages = [
-        page
-        for page in inventory["pages"]
-        if page_ids is None or page.get("page_id") in page_ids
+        page for page in inventory["pages"] if page_ids is None or page.get("page_id") in page_ids
     ]
     if limit is not None:
         if limit < 1:
@@ -105,22 +125,66 @@ def run_ocr(
         pages = pages[:limit]
     if not pages:
         raise RealPilotOCRError("no matching pages")
+    images: dict[str, Path] = {}
+    for page in pages:
+        image_path = _resolve_page_image(page["image_path"])
+        if _sha256(image_path) != page["sha256"]:
+            raise RealPilotOCRError(f"inventory image hash mismatch: {page['page_id']}")
+        images[page["page_id"]] = image_path
+    if output_path.exists() and not resume:
+        raise RealPilotOCRError("output already exists; use --resume or a new output name")
     provider = provider or create_optional_ocr_provider()
     health = provider.health()
     if not health.available:
         raise DomainError("MODEL_UNAVAILABLE", health.details, 503)
+    signature = {
+        key: health.as_dict()[key] for key in ("provider", "model", "version", "preprocessing_hash")
+    }
+    identity = {
+        "inventory_sha256": _sha256(inventory_path),
+        "requested_page_ids": [page["page_id"] for page in pages],
+        "provider_signature": signature,
+    }
     results: list[dict[str, Any]] = []
-    for page in pages:
-        if not isinstance(page, dict) or not isinstance(page.get("image_path"), str):
-            raise RealPilotOCRError("page inventory has an invalid image_path")
-        image_path = _resolve_page_image(page["image_path"])
-        results.append(_result_record(page, image_path, provider.recognize(image_path)))
+    if output_path.exists():
+        try:
+            cached = json.loads(output_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RealPilotOCRError("unable to read existing OCR checkpoint") from exc
+        if (
+            not isinstance(cached, dict)
+            or cached.get("dataset_kind") != "real_pilot_raw_ocr"
+            or cached.get("run_identity") != identity
+            or not isinstance(cached.get("pages"), list)
+        ):
+            raise RealPilotOCRError("checkpoint scope/model changed; use a new output name")
+        for record in cached["pages"]:
+            if not isinstance(record, dict) or (
+                record.get("corrected_text") is not None
+                or record.get("review_state") != "unreviewed"
+                or record.get("status") != "inferred"
+            ):
+                raise RealPilotOCRError("checkpoint contains reviewed or invalid data")
+            if record.get("page_id") not in identity["requested_page_ids"]:
+                raise RealPilotOCRError("checkpoint contains a page outside its scope")
+            expected = next(p for p in pages if p["page_id"] == record["page_id"])
+            if record.get("input_sha256") != expected["sha256"] or any(
+                record.get(key) != value for key, value in signature.items()
+            ):
+                raise RealPilotOCRError("checkpoint image/model fingerprint mismatch")
+            if record.get("result_sha256") != _record_hash(record):
+                raise RealPilotOCRError("checkpoint result integrity mismatch")
+            results.append(record)
+        if len({r["page_id"] for r in results}) != len(results):
+            raise RealPilotOCRError("checkpoint contains duplicate results")
     output = {
         "schema_version": "1.0",
         "dataset_id": "real-pilot-v1-ocr",
         "dataset_kind": "real_pilot_raw_ocr",
         "evaluation_status": "not_evaluated",
-        "pipeline_version": "real-pilot-ocr-v1",
+        "pipeline_version": "real-pilot-ocr-v2-checkpoint",
+        "run_identity": identity,
+        "run_status": "running",
         "provider": health.as_dict(),
         "pages": results,
         "disclaimer": (
@@ -128,6 +192,45 @@ def run_ocr(
             "until human review."
         ),
     }
+    completed = {record["page_id"] for record in results}
+    if progress:
+        progress({"event": "start", "requested": len(pages), "reused": len(completed)})
+    _save_output(output_path, output)
+    try:
+        for page in pages:
+            if page["page_id"] in completed:
+                continue
+            image_path = images[page["page_id"]]
+            record = _result_record(page, image_path, provider.recognize(image_path))
+            if record["input_sha256"] != page["sha256"] or any(
+                record[key] != value for key, value in signature.items()
+            ):
+                raise RealPilotOCRError("OCR input or provider changed during recognition")
+            record["result_sha256"] = _record_hash(record)
+            results.append(record)
+            _save_output(output_path, output)
+            if progress:
+                progress({"event": "page", "page_id": page["page_id"], "done": len(results)})
+    except Exception as exc:
+        output["run_status"] = "failed"
+        output["failure_type"] = type(exc).__name__
+        _save_output(output_path, output)
+        raise
+    rank = {page["page_id"]: i for i, page in enumerate(pages)}
+    results.sort(key=lambda record: rank[record["page_id"]])
+    output["run_status"] = "completed"
+    _save_output(output_path, output)
+    return output
+
+
+def _record_hash(record: dict[str, Any]) -> str:
+    payload = {key: value for key, value in record.items() if key != "result_sha256"}
+    return hashlib.sha256(
+        json.dumps(payload, sort_keys=True, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    ).hexdigest()
+
+
+def _save_output(output_path: Path, output: dict[str, Any]) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
         mode="w", encoding="utf-8", dir=output_path.parent, delete=False, suffix=".part"
@@ -135,17 +238,34 @@ def run_ocr(
         temporary.write(json.dumps(output, ensure_ascii=False, indent=2) + "\n")
         temporary_path = Path(temporary.name)
     temporary_path.replace(output_path)
-    return output
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--page-id", action="append", dest="page_ids")
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--inventory", type=Path, default=INVENTORY_PATH)
+    parser.add_argument("--output", type=Path, default=OUTPUT_PATH)
+    parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--selection", type=Path, help="JSON object containing page_ids")
     args = parser.parse_args()
     try:
-        output = run_ocr(page_ids=set(args.page_ids or []) or None, limit=args.limit)
-    except (RealPilotOCRError, DomainError, ValueError) as exc:
+        selected_ids = set(args.page_ids or [])
+        if args.selection:
+            selection = json.loads(args.selection.read_text(encoding="utf-8"))
+            ids = selection.get("page_ids") if isinstance(selection, dict) else None
+            if not isinstance(ids, list) or not ids or not all(isinstance(i, str) for i in ids):
+                raise RealPilotOCRError("selection must contain a nonempty page_ids array")
+            selected_ids.update(ids)
+        output = run_ocr(
+            page_ids=selected_ids or None,
+            limit=args.limit,
+            inventory_path=args.inventory,
+            output_path=args.output,
+            resume=args.resume,
+            progress=lambda event: print(json.dumps(event, ensure_ascii=False), flush=True),
+        )
+    except (RealPilotOCRError, DomainError, ValueError, OSError) as exc:
         parser.error(str(exc))
     print(
         json.dumps(

@@ -7,6 +7,7 @@ instead of creating duplicate books, figures or vectors.
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import io
 import logging
@@ -32,7 +33,7 @@ from app.db.models import (
     Relation,
     TextChunk,
 )
-from app.ingestion.contracts import ValidatedFixture
+from app.ingestion.contracts import AIRealManifest, FigureRecord, RealManifest, ValidatedFixture
 from app.ingestion.loader import ManifestValidationError, load_manifest
 from app.retrieval.providers.registry import ProviderRegistry
 
@@ -67,10 +68,66 @@ def _provenance(
         "allow_redistribution": source.allow_redistribution,
         "retrieved_at": source.retrieved_at.isoformat(),
         "pipeline_version": source.pipeline_version,
+        "source_category": source.source_category,
     }
     if original_path is not None:
         values["original_path"] = original_path
+    if source.original_sha256 is not None:
+        values["original_pdf_sha256"] = source.original_sha256
     return values
+
+
+def _review_provenance(
+    fixture: ValidatedFixture,
+    *,
+    page_id: str | None = None,
+    figure_id: str | None = None,
+) -> dict[str, Any]:
+    manifest = fixture.manifest
+    if isinstance(manifest, AIRealManifest):
+        audit = manifest.ai_audit.model_dump(mode="json", exclude={"pages", "figures"})
+        audit["figures"] = [
+            f.model_dump(mode="json")
+            for f in manifest.ai_audit.figures
+            if (page_id is None or f.page_id == page_id)
+            and (figure_id is None or f.figure_id == figure_id)
+        ]
+        if figure_id:
+            audit["text_traces"] = [
+                {"text_id": c.text_id, **c.ai_trace.model_dump(mode="json")}
+                for c in manifest.text_chunks
+                if c.figure_id == figure_id and c.ai_trace is not None
+            ]
+        return {
+            "dataset_kind": manifest.dataset_kind,
+            "ai_review": audit,
+            "image_embedding_scope": "figure_bbox",
+            "evaluation_status": manifest.evaluation_status,
+        }
+    if not isinstance(manifest, RealManifest):
+        return {"dataset_kind": manifest.dataset_kind}
+    audit = manifest.review_audit.model_dump(mode="json", exclude={"figures"})
+    audit["figures"] = [
+        record.model_dump(mode="json")
+        for record in manifest.review_audit.figures
+        if (page_id is None or record.page_id == page_id)
+        and (figure_id is None or record.figure_id == figure_id)
+    ]
+    if figure_id:
+        audit["transcriptions"] = [
+            {
+                "text_id": c.text_id,
+                "corrected_text": c.content,
+                **c.transcription_review.model_dump(mode="json"),
+            }
+            for c in manifest.text_chunks
+            if c.figure_id == figure_id and c.transcription_review is not None
+        ]
+    return {
+        "dataset_kind": manifest.dataset_kind,
+        "human_review": audit,
+        "image_embedding_scope": "figure_bbox",
+    }
 
 
 async def _upsert(
@@ -106,6 +163,13 @@ def _crop_asset(path: Path, bbox: Any) -> bytes:
         return output.getvalue()
 
 
+def _figure_image_input(fixture: ValidatedFixture, figure: FigureRecord) -> Path | bytes:
+    path = fixture.asset_paths[figure.asset_id]
+    if isinstance(fixture.manifest, (RealManifest, AIRealManifest)):
+        return _crop_asset(path, figure.bbox)
+    return path
+
+
 async def persist_fixture(
     session: AsyncSession,
     fixture: ValidatedFixture,
@@ -115,7 +179,7 @@ async def persist_fixture(
     """Validate relationships again and upsert all fixture entities."""
 
     manifest = fixture.manifest
-    providers = providers or ProviderRegistry.create()
+    providers = providers or ProviderRegistry.create(settings)
     source_by_id = {item.source_id: item for item in manifest.sources}
     asset_by_id = {item.asset_id: item for item in manifest.assets}
     page_by_id = {item.page_id: item for item in manifest.pages}
@@ -214,9 +278,10 @@ async def persist_fixture(
                 "asset_id": page_asset_id,
                 "width": dimensions.width if dimensions else None,
                 "height": dimensions.height if dimensions else None,
-                "provenance": _provenance(
-                    source, volume=page.volume, page_or_folio=page.page_or_folio
-                ),
+                "provenance": {
+                    **_provenance(source, volume=page.volume, page_or_folio=page.page_or_folio),
+                    **_review_provenance(fixture, page_id=page.page_id),
+                },
             },
         )
 
@@ -237,12 +302,15 @@ async def persist_fixture(
                 "bbox_y": figure.bbox.y,
                 "bbox_width": figure.bbox.width,
                 "bbox_height": figure.bbox.height,
-                "provenance": _provenance(
-                    source,
-                    volume=page_by_id[figure.page_id].volume,
-                    page_or_folio=page_by_id[figure.page_id].page_or_folio,
-                    original_path=figure.original_path,
-                ),
+                "provenance": {
+                    **_provenance(
+                        source,
+                        volume=page_by_id[figure.page_id].volume,
+                        page_or_folio=page_by_id[figure.page_id].page_or_folio,
+                        original_path=figure.original_path,
+                    ),
+                    **_review_provenance(fixture, figure_id=figure.figure_id),
+                },
             },
         )
         # Correct the asset's source/licence using its owning figure.
@@ -282,8 +350,12 @@ async def persist_fixture(
             {
                 "figure_id": figure_ids[chunk.figure_id],
                 "chunk_type": str(chunk.kind),
-                "text": chunk.content,
-                "corrected_text": chunk.content if str(chunk.kind) == "corrected" else None,
+                "text": chunk.transcription_review.raw_text
+                if chunk.transcription_review and chunk.transcription_review.raw_text is not None
+                else chunk.content,
+                "corrected_text": chunk.content
+                if chunk.transcription_review or str(chunk.kind) == "corrected"
+                else None,
                 "source_pointer": chunk.text_id,
                 "state": str(chunk.evidence_state),
             },
@@ -349,14 +421,19 @@ async def persist_fixture(
     for figure in manifest.figures:
         db_figure_id = figure_ids[figure.figure_id]
         text = _text_for_figure(figure, figure_chunks)
-        text_result = providers.text_embedding.encode(text)
+        text_result = await asyncio.to_thread(providers.text_embedding.encode, text)
         await _upsert_embedding(session, db_figure_id, "figure", "text", text_result)
+        if providers.clip_text is not None:
+            clip_text_result = await asyncio.to_thread(providers.clip_text.encode, text)
+            await _upsert_embedding(session, db_figure_id, "figure", "clip_text", clip_text_result)
         image_path = fixture.asset_paths[figure.asset_id]
-        image_result = providers.image_embedding.encode(image_path)
+        image_result = await asyncio.to_thread(
+            providers.image_embedding.encode, _figure_image_input(fixture, figure)
+        )
         await _upsert_embedding(session, db_figure_id, "figure", "image", image_result)
         for region in [item for item in manifest.regions if item.figure_id == figure.figure_id]:
             crop = _crop_asset(image_path, region.bbox)
-            region_result = providers.image_embedding.encode(crop)
+            region_result = await asyncio.to_thread(providers.image_embedding.encode, crop)
             await _upsert_embedding(
                 session, stable_id("region", region.region_id), "region", "image", region_result
             )
@@ -366,6 +443,7 @@ async def persist_fixture(
         **fixture.counts,
         "manifest_name": fixture.manifest_path.name,
         "evaluation_status": manifest.evaluation_status,
+        "dataset_kind": manifest.dataset_kind,
         "idempotent": True,
     }
 
@@ -382,7 +460,14 @@ async def _upsert_embedding(
     result: Any,
 ) -> None:
     metadata = result.metadata
-    embedding_id = stable_id("embedding", f"{entity_type}:{entity_id}:{modality}")
+    # Preserve the existing baseline IDs; neural spaces have separate stable IDs.
+    key = f"{entity_type}:{entity_id}:{modality}"
+    if not metadata.provider.startswith("deterministic_"):
+        key += (
+            f":{metadata.provider}:{metadata.model}:{metadata.version}"
+            f":{metadata.dimension}:{metadata.preprocessing_hash}"
+        )
+    embedding_id = stable_id("embedding", key)
     await _upsert(
         session,
         EmbeddingRecord,

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { fetchAPI, APIError, toAPIError } from '../api/client';
 import { FigureResponseSchema } from '../types';
 import type { FigureResponse } from '../types';
+import DataStatusNotice from '../components/DataStatusNotice';
 
 export default function FigurePage() {
   const { figureId } = useParams();
@@ -55,6 +56,11 @@ export default function FigurePage() {
   return (
     <div className="bg-white shadow rounded-lg p-6">
       <h2 className="text-xl font-bold mb-4">技术图详情：{data.title || data.id}</h2>
+      <DataStatusNotice status={data.data_status} />
+      {data.source && <p className="text-sm text-gray-600 mb-3">
+        {data.source.book_title} · {data.source.source_name} · {data.source.page_or_folio}
+        {data.source.source_url && <a className="text-blue-600 ml-2" href={data.source.source_url} target="_blank" rel="noreferrer">来源目录</a>}
+      </p>}
       <p className="text-sm text-gray-500 mb-4">来源 Page ID: {data.page_id}</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 flex flex-col items-center justify-center relative min-h-[24rem]">
@@ -79,7 +85,14 @@ export default function FigurePage() {
             <h3 className="font-medium text-gray-900 border-b pb-2">图题与文本 (Text)</h3>
             <ul className="mt-2 text-sm text-gray-600 list-disc pl-5">
               {data.text_chunks.length === 0 && <li>无文本</li>}
-              {data.text_chunks.map((txt) => <li key={txt.id}>{txt.corrected_text ?? txt.text}</li>)}
+              {data.text_chunks.map((txt) => <li key={txt.id}>
+                <span className="text-xs text-amber-800 mr-2">{txt.state} · {
+                  txt.origin === 'raw_ocr' ? '原始 OCR，未校订' :
+                  txt.origin === 'ai_visual_description' ? 'AI 场景描述' :
+                  txt.origin === 'ai_visual_transcription' ? 'AI 转录建议' : txt.chunk_type
+                }</span>
+                {txt.corrected_text ?? txt.text}
+              </li>)}
             </ul>
           </div>
           <div>

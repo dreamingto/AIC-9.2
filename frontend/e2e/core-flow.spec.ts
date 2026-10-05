@@ -51,7 +51,7 @@ async function createTextSearch(): Promise<MinimalSearchResponse> {
     data: {
       query: '提水',
       top_k: 10,
-      filters: { book_ids: [], edition_ids: [] },
+      filters: { book_ids: [], edition_ids: [], dataset_kinds: ['synthetic_fixture'] },
     },
   });
   expect(response.ok()).toBeTruthy();
@@ -84,6 +84,7 @@ test.describe.serial('机图索隐全栈演示闭环', () => {
 
   test('文本检索进入比较页并提交人工核验', async ({ page }) => {
     await page.goto('/search');
+    await page.getByRole('combobox', { name: '检索数据' }).selectOption('synthetic_fixture');
     await page.getByLabel('检索词').fill('提水');
     const searchResponsePromise = page.waitForResponse(
       (response) => response.url().endsWith('/api/v1/search/text') && response.ok(),
@@ -91,7 +92,7 @@ test.describe.serial('机图索隐全栈演示闭环', () => {
     await page.getByRole('button', { name: '搜索' }).click();
     await searchResponsePromise;
 
-    await expect(page.getByText(/候选关联:/).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: '查看原图与文本 →' }).first()).toBeVisible();
     await expect(page.getByText('图片受限').first()).toBeVisible();
     await page.getByRole('button', { name: /对照与核验/ }).first().click();
     await expect(page).toHaveURL(/\/compare\/[0-9a-f-]+$/);
@@ -114,6 +115,7 @@ test.describe.serial('机图索隐全栈演示闭环', () => {
     const sourceFigureId = seedSearch.results[0].figure_id;
 
     await page.goto('/search');
+    await page.getByRole('combobox', { name: '检索数据' }).selectOption('synthetic_fixture');
     await page.getByRole('tab', { name: '图片' }).click();
     await page.getByLabel(/上传检索图/).setInputFiles(fixtureImage);
     const imageResponsePromise = page.waitForResponse(
@@ -121,7 +123,7 @@ test.describe.serial('机图索隐全栈演示闭环', () => {
     );
     await page.getByRole('button', { name: '图片检索' }).click();
     await imageResponsePromise;
-    await expect(page.getByText(/候选关联:/).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: '查看原图与文本 →' }).first()).toBeVisible();
 
     await page.getByRole('tab', { name: '区域' }).click();
     await page.getByLabel('UUID').fill(sourceFigureId);
@@ -140,6 +142,6 @@ test.describe.serial('机图索隐全栈演示闭环', () => {
       source_figure_id: sourceFigureId,
     });
     expect(regionSearch.results.length).toBeGreaterThan(0);
-    await expect(page.getByText(/候选关联:/).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: '查看原图与文本 →' }).first()).toBeVisible();
   });
 });

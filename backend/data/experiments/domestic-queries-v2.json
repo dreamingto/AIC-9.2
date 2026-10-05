@@ -1,0 +1,206 @@
+{
+  "schema_version": "1.0",
+  "protocol_id": "domestic-fixed-queries-v2-spatial",
+  "manifest_name": "ai-real-domestic-8b4defa06141f66e.json",
+  "manifest_sha256": "7752ab965597de901ead44541006786a6c45012e1d96948f77d0cf1cd83d34f6",
+  "dataset_kind": "ai_assisted_real_pilot",
+  "evaluation_status": "not_evaluated",
+  "independent_ground_truth": false,
+  "disclaimer": "在查看本轮对照结果前固定查询；现有两个演示查询已有先前观察，属于开发集。所有查询均无独立相关性标签，不计算准确率或检索研究指标。视觉输入来自候选扫描并排除自身，仍不是独立外部测试集。 V2固定保留原24输入；仅扩展背景图AI证据与局部主张范围。",
+  "top_k": 10,
+  "warm_repeats": 2,
+  "queries": [
+    {
+      "id": "t01",
+      "kind": "text",
+      "category": "demo-name",
+      "text": "织机 经线",
+      "purpose": "保留既有织机演示输入，不规定期望排名。"
+    },
+    {
+      "id": "t02",
+      "kind": "text",
+      "category": "demo-function",
+      "text": "水轮 驱动 谷物 加工",
+      "purpose": "保留既有宽泛水力输入，观察土礱等候选。"
+    },
+    {
+      "id": "t03",
+      "kind": "text",
+      "category": "name",
+      "text": "水碓圖",
+      "purpose": "传统字形的图题检索。"
+    },
+    {
+      "id": "t04",
+      "kind": "text",
+      "category": "name",
+      "text": "水磨",
+      "purpose": "图题检索，保留全部背景候选。"
+    },
+    {
+      "id": "t05",
+      "kind": "text",
+      "category": "name",
+      "text": "風扇車",
+      "purpose": "传统字形的非案例图题。"
+    },
+    {
+      "id": "t06",
+      "kind": "text",
+      "category": "name",
+      "text": "土礱",
+      "purpose": "谷物加工背景器具图题。"
+    },
+    {
+      "id": "t07",
+      "kind": "text",
+      "category": "name",
+      "text": "煮茧 缫丝",
+      "purpose": "检索AI场景名，不冒充古籍图题。"
+    },
+    {
+      "id": "t08",
+      "kind": "text",
+      "category": "name",
+      "text": "整经 排列经线",
+      "purpose": "检索丝线作业背景场景。"
+    },
+    {
+      "id": "t09",
+      "kind": "text",
+      "category": "function",
+      "text": "人力织布 经线与支架",
+      "purpose": "用动力、对象和结构描述检索。"
+    },
+    {
+      "id": "t10",
+      "kind": "text",
+      "category": "function",
+      "text": "水力舂捣 谷物加工",
+      "purpose": "观察动力与动作共同出现时的排名。"
+    },
+    {
+      "id": "t11",
+      "kind": "text",
+      "category": "function",
+      "text": "旋转磨粮 水轮带动磨盘",
+      "purpose": "观察旋转和磨盘动作候选。"
+    },
+    {
+      "id": "t12",
+      "kind": "text",
+      "category": "function",
+      "text": "人力旋转产生气流 扬选谷物",
+      "purpose": "背景图功能描述，草稿覆盖不均需单独报告。"
+    },
+    {
+      "id": "t13",
+      "kind": "text",
+      "category": "structure",
+      "text": "水轮 轴 杠杆 臼",
+      "purpose": "部件组合检索，不提供关系标签。"
+    },
+    {
+      "id": "t14",
+      "kind": "text",
+      "category": "structure",
+      "text": "带齿圆盘 磨盘 料袋",
+      "purpose": "局部结构用词检索。"
+    },
+    {
+      "id": "t15",
+      "kind": "text",
+      "category": "structure",
+      "text": "织机 上方垂直控制线 两名操作者",
+      "purpose": "细粒度可见结构检索。"
+    },
+    {
+      "id": "t16",
+      "kind": "text",
+      "category": "out-of-domain",
+      "text": "蒸汽发动机 电动汽车",
+      "purpose": "观察域外查询仍返回候选的限制，不赋予负相关真值。"
+    },
+    {
+      "id": "i01",
+      "kind": "image",
+      "category": "figure-image",
+      "source_figure_key": "ai-zhsy-p24-loom",
+      "purpose": "以室内织机整图区检索，排除来源图。"
+    },
+    {
+      "id": "i02",
+      "kind": "image",
+      "category": "figure-image",
+      "source_figure_key": "ai-zhsy-p26-large-loom",
+      "purpose": "以大型织机整图区检索，排除来源图。"
+    },
+    {
+      "id": "i03",
+      "kind": "image",
+      "category": "figure-image",
+      "source_figure_key": "ai-nlc-p25-water-pestle",
+      "purpose": "以水碓整图区检索，排除来源图；不生成文字查询。"
+    },
+    {
+      "id": "i04",
+      "kind": "image",
+      "category": "figure-image",
+      "source_figure_key": "ai-nlc-p26-water-mill",
+      "purpose": "以水磨整图区检索，排除来源图；不生成文字查询。"
+    },
+    {
+      "id": "r01",
+      "kind": "region",
+      "category": "local-structure",
+      "source_figure_key": "ai-zhsy-p24-loom",
+      "bbox": {
+        "x": 0.025,
+        "y": 0.35,
+        "width": 0.24,
+        "height": 0.32
+      },
+      "purpose": "织机与操作者局部，排除来源图。"
+    },
+    {
+      "id": "r02",
+      "kind": "region",
+      "category": "local-structure",
+      "source_figure_key": "ai-zhsy-p26-large-loom",
+      "bbox": {
+        "x": 0.025,
+        "y": 0.24,
+        "width": 0.31,
+        "height": 0.49
+      },
+      "purpose": "大型织机及控制线局部，排除来源图。"
+    },
+    {
+      "id": "r03",
+      "kind": "region",
+      "category": "local-structure",
+      "source_figure_key": "ai-nlc-p25-water-pestle",
+      "bbox": {
+        "x": 0.4,
+        "y": 0.31,
+        "width": 0.34,
+        "height": 0.42
+      },
+      "purpose": "水轮局部；只使用框内可追溯草稿，不继承全图功能。"
+    },
+    {
+      "id": "r04",
+      "kind": "region",
+      "category": "local-structure",
+      "source_figure_key": "ai-nlc-p26-water-mill",
+      "bbox": {
+        "x": 0.56,
+        "y": 0.2,
+        "width": 0.38,
+        "height": 0.41
+      },
+      "purpose": "磨盘与料袋局部；只使用框内可追溯草稿。"
+    }
+  ]
+}

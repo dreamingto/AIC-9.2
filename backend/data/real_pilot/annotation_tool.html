@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>机图索隐 · 真实页面标注</title>
+  <style>
+    :root { color-scheme: light; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; color: #1e293b; background: #eef2f5; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 1100px; }
+    header { display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: #14212b; color: #f8fafc; }
+    header h1 { margin: 0; font-size: 18px; font-weight: 600; }
+    header .meta { color: #b8c7d3; font-size: 12px; }
+    main { display: grid; grid-template-columns: minmax(640px, 1fr) 390px; gap: 14px; padding: 14px; height: calc(100vh - 54px); }
+    section, aside { background: #fff; border: 1px solid #d8e0e6; border-radius: 6px; min-height: 0; }
+    .stage { display: flex; flex-direction: column; min-height: 0; }
+    .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px; border-bottom: 1px solid #e1e7eb; }
+    button, select, input, textarea { font: inherit; }
+    button { border: 1px solid #bdc8d0; background: #f8fafc; color: #1e293b; border-radius: 4px; padding: 6px 10px; cursor: pointer; }
+    button:hover { background: #e9f0f4; }
+    button.primary { background: #176b87; color: #fff; border-color: #176b87; }
+    button.danger { color: #a33a3a; }
+    select, input, textarea { border: 1px solid #c8d2da; border-radius: 4px; padding: 6px 8px; background: #fff; }
+    .toolbar label { font-size: 12px; color: #51616d; }
+    .canvas-scroll { flex: 1; overflow: auto; padding: 12px; background: #f1f5f7; }
+    .image-wrap { position: relative; width: min(100%, 1000px); margin: 0 auto; background: #d8dee3; box-shadow: 0 2px 8px #0002; }
+    #page-image { display: block; width: 100%; height: auto; }
+    #overlay { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; }
+    .hint { margin: 8px auto 0; max-width: 1000px; color: #60717c; font-size: 12px; }
+    aside { display: flex; flex-direction: column; overflow: hidden; }
+    .side-section { padding: 10px 12px; border-bottom: 1px solid #e1e7eb; }
+    .side-section h2 { font-size: 13px; margin: 0 0 8px; color: #314552; }
+    .page-row { display: flex; gap: 6px; align-items: center; }
+    #page-select { flex: 1; }
+    #page-status { font-size: 12px; color: #527080; white-space: nowrap; }
+    .region-list { max-height: 190px; overflow: auto; border: 1px solid #e1e7eb; }
+    .region { display: grid; grid-template-columns: 1fr auto auto auto; gap: 4px; align-items: center; padding: 5px 6px; border-bottom: 1px solid #edf1f3; font-size: 12px; }
+    .region:last-child { border-bottom: 0; }
+    .region.selected { background: #e5f2f5; }
+    .region button { padding: 2px 6px; font-size: 11px; }
+    .raw { max-height: 150px; overflow: auto; white-space: pre-wrap; font-size: 12px; line-height: 1.55; background: #f8fafb; border: 1px solid #e1e7eb; padding: 8px; }
+    textarea { width: 100%; resize: vertical; min-height: 130px; line-height: 1.55; }
+    .field { display: grid; gap: 5px; margin-top: 8px; }
+    .field label { font-size: 12px; color: #51616d; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 12px; color: #51616d; }
+    .stats strong { color: #1e293b; }
+    .spacer { flex: 1; }
+    #message { min-height: 18px; color: #176b87; font-size: 12px; }
+    #message.error { color: #a33a3a; }
+    .kbd { font-family: Consolas, monospace; border: 1px solid #ccd5da; border-bottom-width: 2px; border-radius: 3px; padding: 0 3px; background: #f8fafc; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>机图索隐 · 真实页面人工标注</h1>
+    <span class="meta">仅本机使用 · raw OCR 不覆盖 · evaluation_status = not_evaluated</span>
+  </header>
+  <main>
+    <section class="stage">
+      <div class="toolbar">
+        <label for="category">框选类别</label>
+        <select id="category">
+          <option value="text">正文</option>
+          <option value="caption">图题</option>
+          <option value="figure">技术图</option>
+          <option value="annotation">旁注/印章</option>
+          <option value="unknown">未知</option>
+        </select>
+        <button id="clear-regions">清空本页框选</button>
+        <span class="spacer"></span>
+        <span class="meta">拖动鼠标框选区域 · 阅读顺序按列表编号</span>
+      </div>
+      <div class="canvas-scroll">
+        <div class="image-wrap">
+          <img id="page-image" alt="当前古籍页面">
+          <canvas id="overlay"></canvas>
+        </div>
+        <div class="hint">颜色：正文蓝、图题橙、技术图绿、旁注/印章紫。点击框可选中，列表中的 ↑ ↓ 可调整阅读顺序。</div>
+      </div>
+    </section>
+    <aside>
+      <div class="side-section">
+        <div class="page-row">
+          <button id="prev">上一页</button>
+          <select id="page-select" aria-label="页面选择"></select>
+          <button id="next">下一页</button>
+        </div>
+        <div id="page-status">加载中…</div>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="side-section">
+        <h2>版面区域与阅读顺序</h2>
+        <div id="region-list" class="region-list"></div>
+      </div>
+      <div class="side-section">
+        <h2>raw OCR（只读）</h2>
+        <pre id="raw" class="raw"></pre>
+        <div class="field">
+          <label for="corrected">corrected text（人工校订，可留空）</label>
+          <textarea id="corrected" maxlength="20000" placeholder="确认字形和阅读顺序后，在此输入校订文本；留空表示尚未完成转录核验。"></textarea>
+        </div>
+        <div class="field">
+          <label for="reviewer">标注人</label>
+          <input id="reviewer" maxlength="120" placeholder="例如：researcher-01">
+        </div>
+      </div>
+      <div class="side-section">
+        <div id="message"></div>
+        <button id="save" class="primary">保存当前页（Ctrl+S）</button>
+        <span class="meta">保存后才会写入本地 annotations.json</span>
+      </div>
+    </aside>
+  </main>
+  <script>
+    const state = { pages: [], index: 0, page: null, draftRegions: [], selected: null, drawing: null };
+    const $ = (id) => document.getElementById(id);
+    const colors = { text: "#1875a1", caption: "#c56b17", figure: "#27865b", annotation: "#7a4e9b", unknown: "#66727a" };
+    const image = $("page-image"), overlay = $("overlay"), ctx = overlay.getContext("2d");
+
+    async function request(url, options) {
+      const response = await fetch(url, options);
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || `HTTP ${response.status}`);
+      return payload;
+    }
+
+    function message(text, error = false) {
+      const node = $("message"); node.textContent = text; node.className = error ? "error" : "";
+    }
+
+    function normalizeRegions() {
+      return state.draftRegions.map((region, index) => ({ ...region, reading_order: index + 1 }));
+    }
+
+    function draw() {
+      if (!overlay.width || !overlay.height) return;
+      ctx.clearRect(0, 0, overlay.width, overlay.height);
+      normalizeRegions().forEach((region, index) => {
+        const b = region.bbox; const x = b.x * overlay.width; const y = b.y * overlay.height;
+        const w = b.width * overlay.width; const h = b.height * overlay.height;
+        ctx.strokeStyle = colors[region.category] || colors.unknown; ctx.lineWidth = region.region_id === state.selected ? 4 : 2;
+        ctx.fillStyle = (colors[region.category] || colors.unknown) + "22"; ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h);
+        ctx.fillStyle = colors[region.category] || colors.unknown; ctx.font = "bold 16px Segoe UI"; ctx.fillText(String(index + 1), x + 4, y + 18);
+      });
+      if (state.drawing) {
+        const d = state.drawing; ctx.strokeStyle = "#e11d48"; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+        ctx.strokeRect(d.x, d.y, d.w, d.h); ctx.setLineDash([]);
+      }
+    }
+
+    function renderRegions() {
+      const list = $("region-list"); list.replaceChildren();
+      normalizeRegions().forEach((region, index) => {
+        const row = document.createElement("div"); row.className = "region" + (region.region_id === state.selected ? " selected" : "");
+        const title = document.createElement("span"); title.textContent = `${index + 1}. ${region.category} · ${region.region_id}`; title.onclick = () => { state.selected = region.region_id; renderRegions(); draw(); };
+        const up = document.createElement("button"); up.textContent = "↑"; up.title = "上移阅读顺序"; up.onclick = () => moveRegion(index, -1);
+        const down = document.createElement("button"); down.textContent = "↓"; down.title = "下移阅读顺序"; down.onclick = () => moveRegion(index, 1);
+        const del = document.createElement("button"); del.textContent = "删"; del.className = "danger"; del.onclick = () => { state.draftRegions.splice(index, 1); state.selected = null; renderRegions(); draw(); };
+        row.append(title, up, down, del); list.appendChild(row);
+      });
+    }
+
+    function moveRegion(index, delta) {
+      const target = index + delta; if (target < 0 || target >= state.draftRegions.length) return;
+      [state.draftRegions[index], state.draftRegions[target]] = [state.draftRegions[target], state.draftRegions[index]]; renderRegions(); draw();
+    }
+
+    function setCanvas() {
+      overlay.width = image.naturalWidth; overlay.height = image.naturalHeight; draw();
+    }
+    image.onload = setCanvas;
+
+    function loadPage(page) {
+      state.page = page; state.draftRegions = JSON.parse(JSON.stringify(page.annotation?.layout?.regions || [])); state.selected = null;
+      $("page-select").value = page.page_id; $("page-status").textContent = `第 ${page.pdf_page} 页 · ${page.annotation?.layout?.status || "pending_review"}`;
+      $("raw").textContent = page.raw_text || "（尚无 raw OCR）";
+      $("corrected").value = page.annotation?.text_layers?.corrected_text || "";
+      $("reviewer").value = page.annotation?.text_layers?.reviewer || "";
+      $("stats").innerHTML = `<div>原图 <strong>${page.width} × ${page.height}</strong></div><div>OCR 行 <strong>${page.ocr_lines.length}</strong></div><div>raw 字符 <strong>${(page.raw_text || "").length}</strong></div><div>区域 <strong>${state.draftRegions.length}</strong></div>`;
+      image.src = page.image_url; renderRegions(); message("已加载，未保存的框选仅保留在本页内");
+    }
+
+    async function loadIndex(index) { state.index = Math.max(0, Math.min(index, state.pages.length - 1)); const page = await request(`/api/page/${encodeURIComponent(state.pages[state.index].page_id)}`); loadPage(page); }
+
+    overlay.addEventListener("pointerdown", (event) => {
+      const rect = overlay.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width * overlay.width; const y = (event.clientY - rect.top) / rect.height * overlay.height;
+      state.drawing = { startX: x, startY: y, x, y, w: 0, h: 0 }; overlay.setPointerCapture(event.pointerId); draw();
+    });
+    overlay.addEventListener("pointermove", (event) => {
+      if (!state.drawing) return; const rect = overlay.getBoundingClientRect(); const x = (event.clientX - rect.left) / rect.width * overlay.width; const y = (event.clientY - rect.top) / rect.height * overlay.height;
+      state.drawing.x = Math.min(state.drawing.startX, x); state.drawing.y = Math.min(state.drawing.startY, y); state.drawing.w = Math.abs(x - state.drawing.startX); state.drawing.h = Math.abs(y - state.drawing.startY); draw();
+    });
+    overlay.addEventListener("pointerup", () => {
+      const d = state.drawing; state.drawing = null; if (!d || d.w < 8 || d.h < 8) { draw(); return; }
+      const category = $("category").value; const index = state.draftRegions.length + 1;
+      state.draftRegions.push({ region_id: `${state.page.page_id}-r${String(index).padStart(3, "0")}`, category, bbox: { x: d.x / overlay.width, y: d.y / overlay.height, width: d.w / overlay.width, height: d.h / overlay.height }, reading_order: index, review_state: "reviewed" });
+      renderRegions(); draw();
+    });
+
+    $("clear-regions").onclick = () => { state.draftRegions = []; state.selected = null; renderRegions(); draw(); };
+    $("prev").onclick = () => loadIndex(state.index - 1).catch((error) => message(error.message, true));
+    $("next").onclick = () => loadIndex(state.index + 1).catch((error) => message(error.message, true));
+    $("page-select").onchange = (event) => { const index = state.pages.findIndex((page) => page.page_id === event.target.value); loadIndex(index).catch((error) => message(error.message, true)); };
+    $("save").onclick = async () => {
+      if (!state.page) return; const corrected = $("corrected").value.trim() || null; const payload = { layout: { orientation: "vertical_columns", regions: normalizeRegions(), reading_order: normalizeRegions().map((region) => region.region_id) }, text_layers: { corrected_text: corrected, reviewer: $("reviewer").value.trim() || null, change_log: state.page.annotation?.text_layers?.change_log || [] } };
+      try { const saved = await request(`/api/page/${encodeURIComponent(state.page.page_id)}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); state.page.annotation = saved.annotation; state.pages[state.index].layout_status = saved.annotation.layout.status; state.pages[state.index].correction_state = saved.annotation.text_layers.correction_state; message("已保存：版面、阅读顺序和校订轨迹已写入 annotations.json"); } catch (error) { message(error.message, true); }
+    };
+    document.addEventListener("keydown", (event) => { if (event.ctrlKey && event.key.toLowerCase() === "s") { event.preventDefault(); $("save").click(); } if (!event.ctrlKey && event.key.toLowerCase() === "n") $("next").click(); if (!event.ctrlKey && event.key.toLowerCase() === "p") $("prev").click(); });
+
+    (async () => { try { const payload = await request("/api/pages"); state.pages = payload.pages; const select = $("page-select"); state.pages.forEach((page) => { const option = document.createElement("option"); option.value = page.page_id; option.textContent = `p${String(page.pdf_page).padStart(2, "0")} · ${page.raw_chars} chars · ${page.layout_status}`; select.appendChild(option); }); await loadIndex(0); } catch (error) { message(error.message, true); } })();
+  </script>
+</body>
+</html>

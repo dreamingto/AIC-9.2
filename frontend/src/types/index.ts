@@ -46,6 +46,15 @@ export const SourceSummarySchema = z.object({
 });
 export type SourceSummary = z.infer<typeof SourceSummarySchema>;
 
+export const DataStatusSchema = z.object({
+  dataset_kind: z.string(),
+  review_origin: z.string(),
+  human_reviewed: z.boolean(),
+  source_category: z.string(),
+  evaluation_status: z.literal('not_evaluated'),
+});
+export type DataStatus = z.infer<typeof DataStatusSchema>;
+
 export const RegionResponseSchema = z.object({
   id: z.string().uuid(),
   label: z.string().nullable(),
@@ -107,6 +116,8 @@ export const SearchResultSchema = z.object({
   evidence: z.array(EvidenceResponseSchema),
   uncertainty: z.record(z.string(), z.number()),
   verification_state: VerificationStateSchema,
+  title: z.string().nullable().optional(),
+  data_status: DataStatusSchema.optional(),
 });
 export type SearchResult = z.infer<typeof SearchResultSchema>;
 
@@ -128,6 +139,8 @@ export const QuerySummaryRegionSchema = z.object({
   type: z.literal("region"),
   source_figure_id: z.string().uuid(),
   bbox: z.object({ x: z.number(), y: z.number(), width: z.number(), height: z.number() }),
+  coordinate_space: z.literal('normalized').optional(),
+  claim_scope: z.literal('spatial_supports_contained_in_crop').optional(),
 });
 export type QuerySummaryRegion = z.infer<typeof QuerySummaryRegionSchema>;
 
@@ -177,6 +190,7 @@ export const TextChunkResponseSchema = z.object({
   corrected_text: z.string().nullable(),
   source_pointer: z.string().nullable(),
   state: EvidenceStateSchema,
+  origin: z.string().nullable().optional(),
 });
 export type TextChunkResponse = z.infer<typeof TextChunkResponseSchema>;
 
@@ -201,8 +215,24 @@ export const FigureResponseSchema = z.object({
   assertions: z.array(FunctionalAssertionResponseSchema),
   relations: z.array(RelationResponseSchema),
   evidences: z.array(EvidenceResponseSchema),
+  source: SourceSummarySchema.nullable().optional(),
+  data_status: DataStatusSchema.optional(),
 });
 export type FigureResponse = z.infer<typeof FigureResponseSchema>;
+
+export const DemoCaseSchema = z.object({
+  id: z.string(), title: z.string(), description: z.string(), source_note: z.string(),
+  text_query: z.string(), figures: z.array(FigureResponseSchema), ready: z.boolean(),
+  region_query: z.object({
+    figure_id: z.string().uuid().nullable(), page_id: z.string().uuid().nullable(),
+    bbox: z.object({ x: z.number(), y: z.number(), width: z.number(), height: z.number() }),
+    coordinate_space: z.literal('normalized'), top_k: z.number(),
+    filters: z.object({ dataset_kinds: z.array(z.string()).nullable() }).passthrough(),
+  }).nullable(),
+  limitations: z.array(z.string()), evaluation_status: z.literal('not_evaluated'),
+});
+export const DemoCasesSchema = z.array(DemoCaseSchema);
+export type DemoCase = z.infer<typeof DemoCaseSchema>;
 
 export const CandidateResponseSchema = SearchResultSchema.extend({
   search_id: z.string().uuid(),

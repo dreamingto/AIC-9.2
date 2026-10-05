@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0",
+  "release_id": "domestic-34033a592c974cd7",
+  "archive": "jitu-domestic-34033a592c974cd7.zip",
+  "archive_sha256": "e108e27390b3b1200e7eeb314a2905e38ff609061bba8f58b67a725de8d1080e",
+  "archive_bytes": 48587383,
+  "files": [
+    {
+      "path": "backend/data/assets/ai_real_v1/8b4defa06141f66e/commons-nlc-tiangong-kaiwu-2-1637-p0024.png",
+      "size": 3383745,
+      "sha256": "287b8f500adbf25422b712d81b2187ada7cfc3b687270e0658d44ad4269a9d4e"
+    },
+    {
+      "path": "backend/data/assets/ai_real_v1/8b4defa06141f66e/commons-nlc-tiangong-kaiwu-2-1637-p0025.png",
+      "size": 3015346,
+      "sha256": "66b49c974b6fcfa6ceea47ed9f5b0f3d5471ecb45754451aa443fb590777ec02"
+    },
+    {
+      "path": "backend/data/assets/ai_real_v1/8b4defa06141f66e/commons-nlc-tiangong-kaiwu-2-1637-p0026.png",
+      "size": 2978228,
+      "sha256": "70f0e46c7fa821a204ad807621f9e87d8e63eae423c9ead97c565d07f6ff8b62"
+    },
+    {
+      "path": "backend/data/assets/ai_real_v1/8b4defa06141f66e/commons-zhsy-gengzhi-tu-1696-p0022.png",
+      "size": 443701,
+      "sha256": "27cf3c9667bcf036a2c8ded2a9e70a39e89e63d068fb0b45beeefaec72e82f25"
+    },
+    {
+      "path": "backend/data/assets/ai_real_v1/8b4defa06141f66e/commons-zhsy-gengzhi-tu-1696-p0023.png",
+      "size": 463821,
+      "sha256": "3e6a567432f8411accbb9399bb297948cb235e286fbede4040021b6f1d76b4da"
+    },
+    {
+      "path": "backend/data/assets/ai_real_v1/8b4defa06141f66e/commons-zhsy-gengzhi-tu-1696-p0024.png",
+      "size": 485819,
+      "sha256": "ae8f681292f1b9f1b35834cd369b85a25131d33af7ee1fa7f2946b5df9f13f63"
+    },
+    {
+      "path": "backend/data/assets/ai_real_v1/8b4defa06141f66e/commons-zhsy-gengzhi-tu-1696-p0025.png",
+      "size": 464108,
+      "sha256": "807cfd88188cee93db14d0f358977cb9425643e4f36bc7a394535b400b83bf09"
+    },
+    {
+      "path": "backend/data/assets/ai_real_v1/8b4defa06141f66e/commons-zhsy-gengzhi-tu-1696-p0026.png",
+      "size": 458458,
+      "sha256": "501455ff06c50f68a09223e94ce3ea66732041afa90a47cbd5ce1436efb36a71"
+    },
+    {
+      "path": "backend/data/assets/real_pilot_v1/gengzhi-tu-zhsy-1696.pdf",
+      "size": 11509805,
+      "sha256": "4542fff8470bfcb5137d238b3f3628a704d6c43dc862e9cc2d6b7a1b9dbd866b"
+    },
+    {
+      "path": "backend/data/assets/real_pilot_v1/tiangong-kaiwu-vol2-nlc-1637.pdf",
+      "size": 13866846,
+      "sha256": "32dafd49217b5fb460fe2dd2a5cd01defb0786ac5bb509bde95aff2a80175106"
+    },
+    {
+      "path": "backend/data/manifests/ai-real-domestic-8b4defa06141f66e.json",
+      "size": 95778,
+      "sha256": "7752ab965597de901ead44541006786a6c45012e1d96948f77d0cf1cd83d34f6"
+    },
+    {
+      "path": "backend/data/processed/real_pilot_v1/commons-nlc-tiangong-kaiwu-2-1637/page-0024.png",
+      "size": 3383745,
+      "sha256": "287b8f500adbf25422b712d81b2187ada7cfc3b687270e0658d44ad4269a9d4e"
+    },
+    {
+      "path": "backend/data/processed/real_pilot_v1/commons-nlc-tiangong-kaiwu-2-1637/page-0025.png",
+      "size": 3015346,
+      "sha256": "66b49c974b6fcfa6ceea47ed9f5b0f3d5471ecb45754451aa443fb590777ec02"
+    },
+    {
+      "path": "backend/data/processed/real_pilot_v1/commons-nlc-tiangong-kaiwu-2-1637/page-0026.png",
+      "size": 2978228,
+      "sha256": "70f0e46c7fa821a204ad807621f9e87d8e63eae423c9ead97c565d07f6ff8b62"
+    },
+    {
+      "path": "backend/data/processed/real_pilot_v1/commons-zhsy-gengzhi-tu-1696/page-0022.png",
+      "size": 443701,
+      "sha256": "27cf3c9667bcf036a2c8ded2a9e70a39e89e63d068fb0b45beeefaec72e82f25"
+    },
+    {
+      "path": "backend/data/processed/real_pilot_v1/commons-zhsy-gengzhi-tu-1696/page-0023.png",
+      "size": 463821,
+      "sha256": "3e6a567432f8411accbb9399bb297948cb235e286fbede4040021b6f1d76b4da"
+    },
+    {
+      "path": "backend/data/processed/real_pilot_v1/commons-zhsy-gengzhi-tu-1696/page-0024.png",
+      "size": 485819,
+      "sha256": "ae8f681292f1b9f1b35834cd369b85a25131d33af7ee1fa7f2946b5df9f13f63"
+    },
+    {
+      "path": "backend/data/processed/real_pilot_v1/commons-zhsy-gengzhi-tu-1696/page-0025.png",
+      "size": 464108,
+      "sha256": "807cfd88188cee93db14d0f358977cb9425643e4f36bc7a394535b400b83bf09"
+    },
+    {
+      "path": "backend/data/processed/real_pilot_v1/commons-zhsy-gengzhi-tu-1696/page-0026.png",
+      "size": 458458,
+      "sha256": "501455ff06c50f68a09223e94ce3ea66732041afa90a47cbd5ce1436efb36a71"
+    },
+    {
+      "path": "backend/data/real_pilot/domestic_ai_selection.json",
+      "size": 10337,
+      "sha256": "a1ee89e122a37d7beaeebb59bf7e6548e6c50721d2dfe57c5d73bc2570e7afb5"
+    },
+    {
+      "path": "backend/data/real_pilot/sources.json",
+      "size": 7778,
+      "sha256": "b4253e5795ab9d128e9a0e994f8f7eef8b054a7cd8b62bc4cf92ce6ebe993cb3"
+    },
+    {
+      "path": "backend/data/real_pilot/supplementary_ocr_results.json",
+      "size": 81284,
+      "sha256": "2c9834fa2383f2266227463b2449eb2fdba5b2ee5741109ce96c253ed1e9f491"
+    },
+    {
+      "path": "backend/data/real_pilot/supplementary_pages.json",
+      "size": 160694,
+      "sha256": "a52e9f9d10f0d4fc78b5eec1a5a6c72a952b237711d7749ae98657364cbb9304"
+    },
+    {
+      "path": "backend/data/release/embeddings.json",
+      "size": 772143,
+      "sha256": "5afd54686d02409ef12ce7aa37e146a40e1e64ee28465005f22ee4d4d20ed8ee"
+    }
+  ],
+  "manifest_name": "ai-real-domestic-8b4defa06141f66e.json",
+  "evaluation_status": "not_evaluated",
+  "independent_ground_truth": false,
+  "models_included": false,
+  "figures": 12,
+  "regions": 14,
+  "vector_records": 88,
+  "source_urls": [
+    "https://commons.wikimedia.org/wiki/File:NLC892-411999010751-35278_%E5%A4%A9%E5%B7%A5%E9%96%8B%E7%89%A9_%E7%AC%AC2%E5%86%8A.pdf",
+    "https://commons.wikimedia.org/wiki/File:ZHSY100126_%E8%80%95%E7%B9%94%E5%9C%96_%E6%B8%85%E7%84%A6%E7%A7%89%E8%B2%9E%E7%B9%AA_%E6%B8%85%E5%BA%B7%E7%86%99%E4%B8%89%E5%8D%81%E4%BA%94%E5%B9%B4%E5%85%A7%E5%BA%9C%E5%88%BB%E6%9C%AC.pdf"
+  ],
+  "license_note": "Sources permit redistribution according to the frozen registry; keep original scans, watermarks and provenance. AI labels are Inferred."
+}

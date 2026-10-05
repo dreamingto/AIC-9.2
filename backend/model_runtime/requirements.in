@@ -1,0 +1,9 @@
+# Windows Python 3.12. Keep this runtime separate from backend and PaddleOCR.
+# Install torch first from https://download.pytorch.org/whl/cu128
+torch==2.7.1+cu128
+transformers==4.51.3
+fastapi==0.141.1
+uvicorn==0.52.4
+pillow==11.3.0
+numpy==2.2.6
+safetensors==0.5.3

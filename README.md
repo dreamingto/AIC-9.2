@@ -1,60 +1,38 @@
-# 机图索隐全栈 V1.1-B
+# 机图索隐：国内古籍证据感知检索
 
-这是“机图索隐”智能文化赛道项目的全栈工程基线。V1.1-A 面向本地或受控演示环境，在 V1 业务闭环上补齐运行时契约、全栈 smoke 与浏览器 E2E：
+当前比赛版V1.2：FastAPI/PostgreSQL/pgvector与React19/Nginx全栈，BGE-small-zh-v1.5中文文本、Chinese-CLIP视觉/中文图文、PaddleOCR raw、文本/图片/区域检索、来源证据与候选核验持久化。12幅国内真实图与9幅synthetic fixture分别标记；AI数据保持Inferred，研究指标not_evaluated。
 
-`受控 manifest 导入 -> PostgreSQL/pgvector 持久化 -> 文本/图片/区域检索 -> EAFR 重排 -> React 证据展示与比较 -> 人工核验持久化`
+真实内容以中华再造善本/国家图书馆出版社来源《耕织图》8图为主，国图馆藏《天工开物》4图补充。Commons是获取渠道，国内出版与馆藏分别记录。两个固定案例为织机及水碓/水磨；排名实际计算，没有硬编码期望名次。
 
-fixture 是合成数据，只用于验证接口、数据链路和可复现性。它的 `evaluation_status` 为 `not_evaluated`，不能作为真实古籍实验指标或历史传承结论。
+## 启动
 
-## 项目文档
-
-- [项目策划书](docs/机图索隐_项目策划书.md)
-- [项目需求文档](docs/机图索隐_项目需求文档.md)
-- [项目技术文档](docs/机图索隐_项目技术文档.md)
-
-## 快速启动
-
-前置条件：Docker Desktop 正在运行。
+Windows、Docker Desktop，Docker Compose >=2.24.4。源码不需要私密.env即可解析默认Compose；启动脚本会首次从模板创建.env，已有配置不覆盖。
 
 ```powershell
-docker compose up --build
+./scripts/start.ps1 -Profile fixture  # 干净目录合成工程版
+./scripts/start.ps1 -Profile real     # 已恢复国内数据的离线基线
+./scripts/start.ps1 -Profile neural   # 已准备真实数据、模型和索引
 ```
 
-Compose 默认从 AWS Public ECR 的 Docker 官方镜像缓存获取 Python 3.12、
-PostgreSQL 16、Node 22 和 Nginx，并从 PostgreSQL 官方 PGDG 仓库安装固定版本的 pgvector 0.8.6。
-这可避开本机失效的 Docker Hub 镜像加速器；基础镜像地址和 pgvector 包版本均可通过
-`.env` 中的 `PYTHON_BASE_IMAGE`、`POSTGRES_BASE_IMAGE`、
-`PGVECTOR_PACKAGE_VERSION` 覆盖。后端容器运行依赖固定在
-`backend/requirements.lock`。
+入口：<http://localhost>；固定案例<http://localhost/demo>；Swagger<http://localhost:8000/docs>；OpenAPI<http://localhost:8000/openapi.json>。
 
-服务地址：
-
-- 前端：<http://localhost>
-- API：<http://localhost:8000>
-- Swagger：<http://localhost:8000/docs>
-- OpenAPI JSON：<http://localhost:8000/openapi.json>
-
-Compose 启动时会先执行 `alembic upgrade head`，然后启动 Uvicorn；后端健康后再启动 Nginx 前端。Nginx 为 React Router 提供 SPA 回退，并将 `/api/` 代理到后端。数据库不可用时 `/api/v1/health` 返回统一的 `DATABASE_UNAVAILABLE` 错误，不会切换到 SQLite。 Compose backend 仅只读挂载 fixture 与 manifest；真实 PDF/渲染图留在宿主机受控目录。
-
-## 导入 fixture
-
-启动服务后调用：
+fixture启动后导入：
 
 ```powershell
 $body = '{"manifest_name":"jitu-fixture-v1.json","dry_run":false}'
-Invoke-RestMethod -Method Post -Uri http://localhost:8000/api/v1/ingestion/jobs `
-  -ContentType 'application/json' -Body $body
+$job = Invoke-RestMethod -Method Post -Uri http://localhost:8000/api/v1/ingestion/jobs -ContentType application/json -Body $body
+Invoke-RestMethod ('http://localhost:8000/api/v1/ingestion/jobs/' + $job.id)
 ```
 
-返回的 job ID 可用以下接口轮询：
+数据库不可用明确503，不用SQLite。神经模型或兼容索引不可用明确503，不静默回退。已导入真实数据时保留ai-real资产挂载。Profile切换共用本机业务卷；独立测试/复现使用独立项目与空库。
 
-```text
-GET /api/v1/ingestion/jobs/{job_id}
-```
+## 真实数据与模型复现
 
-导入器只接受 `backend/data/manifests` 下的文件名，校验 manifest schema、资源路径、PNG 魔数、尺寸、哈希和许可字段。重复导入同一 manifest 使用稳定 UUID 并更新向量，不会产生重复实体。
+[release/README.md](release/README.md)提供冻结输入包、逐文件锁、安全恢复、原始PDF、8扫描、库存/raw OCR、固定manifest和88条国内向量恢复步骤。权重不放Git，独立模型环境见[model_runtime/README.md](backend/model_runtime/README.md)。
 
-## API 概览
+国内数据包本机位于`D:/codex-releases/AIC-9.2/`，发布信息与SHA见`release/`。没有冻结包，只能启动工程版；从PDF重新OCR会创建新输入版本。模型固定revision、文件SHA256及预处理；512维BGE与CLIP不混算。基线256维与神经512维并存，迁移0002_model_spaces。初次准备需要下载，此后推理只读本地文件。
+
+## API（17个操作）
 
 ```text
 GET  /api/v1/health
@@ -72,97 +50,44 @@ GET  /api/v1/associations/{candidate_id}
 POST /api/v1/associations/{candidate_id}/verify
 POST /api/v1/ingestion/jobs
 GET  /api/v1/ingestion/jobs/{job_id}
+GET  /api/v1/demo/cases
+POST /api/v1/demo/cases/{case_id}/search
 ```
 
-所有错误都使用 `error.code/message/request_id/details`。资源接口会检查 `allow_redistribution`；受限资源返回 `LICENSE_RESTRICTED`。人工核验只更新候选关联状态，不会把底层 `Evidence` 自动改成 `Verified`。
+错误统一error.code/message/request_id/details。禁止再分发资源403；核验不自动升级Evidence。上传校验MIME/魔数/字节/像素，区域只接受有限归一化正面积。
 
-## 本地质量检查
+## 评分与证据
 
-后端在 `backend` 目录执行：
+EAFR返回sv/st/sr/sf/sg/se/u_model、可用性、可靠性、贡献和权重。环境JSON配置：
+
+```text
+EAFR_WEIGHTS={"beta_v":0.25,"beta_t":0.25,"beta_r":0.2,"beta_f":0.2,"beta_g":0.05,"lambda_e":0.1,"lambda_u":0.05}
+```
+
+值有限且在[0,1]，未知键拒绝。默认为工程参数，无最优性主张。缺失项不可用且不重归一放大；动态来源可靠性尚未学习。局部查询只继承空间支持完全落在crop内的主张；策略eafr-v2-spatial和权重存入会话，旧快照保留。
+
+实验V2覆盖12图、72槽（45草稿/27unknown）、10关系均Inferred/confidence=null，关系不参与图重排。实验草稿未写入业务标签或默认线上排序。固定24开发查询/8方法、176适用组合/16不适用；无独立qrels，不算Recall/MRR/nDCG。backend目录执行：
 
 ```powershell
-python -m compileall -q app tests scripts
-ruff check .
-mypy app scripts/smoke_fullstack.py
-pytest -q
+.venv/Scripts/python.exe -X utf8 -m scripts.run_domestic_comparison
 ```
 
-前端要求 Node.js `>=22.12.0`，在 `frontend` 目录执行：
+## 检查
 
-```powershell
-npm ci
-npm run lint
-npm run test -- --run
-npm run build
-```
+backend：python -m compileall -q app scripts tests model_runtime；ruff check app scripts tests model_runtime；mypy app scripts；pytest -q。
 
-完整三服务启动后，在项目根目录和 `frontend` 目录分别执行：
+frontend（Node>=22.12）：npm ci；npm run lint；npm run test -- --run；npm run build。真实服务使用npm run test:e2e。
 
-```powershell
-python backend/scripts/smoke_fullstack.py
-cd frontend
-npm run test:e2e
-```
+GitHub Actions含前后端检查和独立PG迁移/集成。后端生成frontend/src/types/openapi.json，CI拒绝未提交的契约变化，Vitest比较后端字段与前端Zod响应Schema。接口更新后在backend执行python -m scripts.export_openapi --output ../frontend/src/types/openapi.json。
 
-`smoke_fullstack.py` 从 Nginx 统一入口验证健康、能力、幂等导入、三类检索、会话重读、候选核验和资源许可。Playwright 使用本机 Chrome 验证来源页、文本检索与核验、图片上传和区域搜索。
+## 文档与材料
 
-截至 2026-09-04，前端 11 项 Vitest、后端 47 项 Pytest、全栈 smoke 和 3 项 Playwright E2E 均已通过；重建后的 `db`、`backend`、`frontend` 三个容器均为 healthy。PostgreSQL migration、pgvector 读写和全栈验收必须使用 Docker daemon，不能用 SQLite 替代。
+- [当前架构与需求](docs/机图索隐_当前架构与需求_V1.2.md)
+- [审查及修复记录](docs/机图索隐_项目与Git完整性审查_2026-10-05.md)
+- [固定查询V1](docs/机图索隐_固定查询算法对照与功能证据草稿.md)：历史结果，新报告独立生成。
+- [模型与案例](docs/机图索隐_真实检索模型与固定案例.md)
+- [国内数据](docs/机图索隐_国内古籍AI比赛演示.md)
+- competition/：技术报告源稿、简介、讲稿、答辩内容与生成工具。
+- .tuji/TESTS.md：实际检查、跳过、not_run分轮记录。
 
-## 目录说明
-
-- `backend/app/retrieval/providers`：离线文本、图像、CFR、关系和 Mock Provider。
-- `backend/app/retrieval/rerank/scoring.py`：可解释 EAFR 评分与证据覆盖。
-- `backend/app/services/ingestion_service.py`：受控 manifest 的稳定 UUID upsert 和向量生成。
-- `backend/scripts/smoke_fullstack.py`：不依赖第三方 Python 包的全栈 smoke runner。
-- `backend/data/manifests/jitu-fixture-v1.json`：3 个来源、9 个图单元、18 个区域和 12 个 benchmark pair；其中合成来源 C 专用于验证禁止再分发路径。
-- `frontend/`：React 19、TypeScript、Vite、Zod、Vitest、Playwright 和 Nginx 组成的单页应用，覆盖三类检索、来源浏览、图详情、候选比较和人工核验。
-- `frontend/e2e/core-flow.spec.ts`：通过真实 Nginx/API/PostgreSQL 链路执行浏览器闭环验收。
-- `机图索隐_前端对接提示词.md`：前后端接口与文案约束。
-- `机图索隐_前端修复提示词.md`：前端契约审查与修复要求记录。
-
-首版不提供登录、账号体系、Celery、Redis、PyTorch 或远程模型。确定性 Provider 是工程 baseline，不宣称具备真实语义理解能力；前端展示的关联、分数和证据也不构成历史传承结论。
-
-## V1.1-B 真实古籍试点进展
-
-2026-09-29 已完成首批真实来源登记、页面准备和 PaddleOCR 单页基线试跑：
-
-- 《天工开物》第二册：28 页，作为首批 OCR/版面标注试点。
-- 《农政全书》第一册：79 页，已下载并完成来源登记，待逐页审查后再纳入标注。
-- 两份原始 PDF 均来自 Wikimedia Commons 的 National Archives of Japan 扫描，文件页元数据显示为 Public domain；来源链接、Commons SHA-1、本地 SHA-256、页数和字节数记录在 `backend/data/real_pilot/sources.json`。
-- `backend/scripts/prepare_real_pilot.py` 已将首批 28 页渲染为 PNG，并生成 `backend/data/real_pilot/derived_pages.json`。渲染图位于被 Git 忽略的 `backend/data/processed/real_pilot_v1/`，不会随代码提交；`backend/.dockerignore` 也排除真实 PDF 和渲染图，避免进入后端镜像。
-- 页面库存仍包含尺寸、哈希、来源和待标注占位字段；版面/图题/功能标注和真实检索评测尚未完成，`evaluation_status` 保持 `not_evaluated`。
-
-准备命令：
-
-```powershell
-python backend/scripts/download_real_pilot.py
-python backend/scripts/prepare_real_pilot.py
-# 需要渲染第二来源时：
-python backend/scripts/prepare_real_pilot.py --source-id commons-najda-nongzheng-quanshu-1
-```
-
-原始 PDF 不提交 Git；对外发布前重新检查 Commons 文件页及目标司法辖区的训练、展示和再分发权利。
-
-### 运行真实 OCR
-
-OCR 运行时保持在仓库外的独立 Windows CPU 环境，不加入 `backend/.venv` 或后端 Docker 镜像。当前锁定组合为：
-
-- Python 3.12.14
-- `paddlepaddle==3.0.0`
-- `paddleocr==3.0.3`
-- `paddlex==3.0.3`
-- `PP-OCRv5_mobile_det` + `PP-OCRv5_mobile_rec`
-
-完整传递依赖锁定在 `backend/requirements-ocr.lock`。使用 `127.0.0.1:7890` 代理下载模型后执行：
-
-```powershell
-$env:PYTHONPATH = "D:\codex-project\比赛\9.2\backend"
-$env:PADDLE_PDX_MODEL_SOURCE = "BOS"
-$env:PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK = "True"
-$env:HTTP_PROXY = "http://127.0.0.1:7890"
-$env:HTTPS_PROXY = "http://127.0.0.1:7890"
-& "D:\codex-runtime\jitu-paddleocr-3.0.3\Scripts\python.exe" `
-  backend/scripts/run_real_pilot_ocr.py --limit 1
-```
-
-已完成首张《天工开物》页面 smoke：生成 39 条有效 raw OCR 行、192 个字符，Provider 元数据为 `paddleocr / PP-OCRv5_mobile / 3.0.3`。结果写入被 Git 忽略的 `backend/data/real_pilot/ocr_results.json`；raw OCR 是机器推断，`corrected_text` 仍为 `null`，待人工逐字校订，不能据此宣称 OCR 质量或历史结论。
+长文保留历史基线范围；当前能力以V1.2说明为准。比赛暂不人工审核，旧人工工作流可选。AI场景、动态功能和关系不是历史结论；无独立真值时CER/WER/图题召回等保持not_evaluated。

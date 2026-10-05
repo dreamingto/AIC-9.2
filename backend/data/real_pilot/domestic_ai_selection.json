@@ -1,0 +1,146 @@
+{
+  "schema_version": "1.0",
+  "selection_id": "domestic-ai-demo-v1",
+  "review_origin": "ai_assisted",
+  "human_review_status": "skipped_by_user_for_competition",
+  "evaluation_status": "not_evaluated",
+  "priority": "domestic_publication",
+  "disclaimer": "AI 对扫描图像作场景整理；不属于独立人工审核。场景描述不是古籍原文，图题转录也未人工校订。not_evaluated。",
+  "source_categories": {
+    "commons-zhsy-gengzhi-tu-1696": "domestic_publication",
+    "commons-nlc-tiangong-kaiwu-2-1637": "domestic_holding"
+  },
+  "scope_note": "优先中华再造善本/国家图书馆出版社来源《耕织图》。国图《天工开物》24—26页是谷物加工机械；纠正旧补充选页中纺织专题的初筛推断。原PDF、扫描、水印和raw OCR均保留。",
+  "figures": [
+    {
+      "figure_id": "ai-zhsy-p22-reeling",
+      "page_id": "commons-zhsy-gengzhi-tu-1696-p0022",
+      "title": "煮茧缫丝作业（AI场景名）",
+      "title_origin": "ai_visual_description",
+      "description": "AI场景描述：左侧画面中可见妇女在锅旁操作轮架，周围有人搬运容器和处理物料。可用于比较煮茧、缫丝与人力轮架；具体工序名和器具结构待核实，不转录上方题诗。",
+      "bbox": {"x": 0.01, "y": 0.20, "width": 0.47, "height": 0.78},
+      "regions": [{"label": "锅与轮架", "bbox": {"x": 0.24, "y": 0.58, "width": 0.15, "height": 0.28}}],
+      "visual_note": "已查看原扫描。使用现代场景名而非声称辨认古籍图题。左侧框内文字仅保留机器raw；不借右侧诗文补写。"
+    },
+    {
+      "figure_id": "ai-zhsy-p23-framework",
+      "page_id": "commons-zhsy-gengzhi-tu-1696-p0023",
+      "title": "丝线框架作业（AI场景名）",
+      "title_origin": "ai_visual_description",
+      "description": "AI场景描述：右侧房屋内可见多人、悬挂丝束和带交叉撑杆的方形框架，呈丝线整理场景。框架的确切名称、工序和传动方式不确定。左侧祭祀场景不纳入技术图单元。",
+      "bbox": {"x": 0.52, "y": 0.20, "width": 0.47, "height": 0.78},
+      "regions": [{"label": "方形丝线框架", "bbox": {"x": 0.60, "y": 0.53, "width": 0.17, "height": 0.27}}],
+      "visual_note": "已查看原扫描。只描述可见框架，不推断祭祀或工序关系。"
+    },
+    {
+      "figure_id": "ai-zhsy-p24-loom",
+      "page_id": "commons-zhsy-gengzhi-tu-1696-p0024",
+      "title": "室内织机作业（AI场景名）",
+      "title_origin": "ai_visual_description",
+      "description": "AI场景描述：左侧房屋内有妇女坐于木质织机前，机上可见经线和支架。用于展示人力织布、经线和织机结构的候选；原图具体织法和操作步骤未核实。",
+      "bbox": {"x": 0.01, "y": 0.20, "width": 0.47, "height": 0.78},
+      "regions": [{"label": "织机与操作者", "bbox": {"x": 0.025, "y": 0.35, "width": 0.24, "height": 0.32}}],
+      "visual_note": "已查看原扫描。名称为AI整理，题诗不作机器功能说明。"
+    },
+    {
+      "figure_id": "ai-zhsy-p24-threadwork",
+      "page_id": "commons-zhsy-gengzhi-tu-1696-p0024",
+      "title": "丝线轮架作业（AI场景名）",
+      "title_origin": "ai_visual_description",
+      "description": "AI场景描述：右侧室内人物在轮架旁从事丝线作业，庭院中另有持物人物。可见器具较小，暂不确定是纺丝、绕丝或其他工序，仅作为人力丝线处理的待核实场景。",
+      "bbox": {"x": 0.52, "y": 0.20, "width": 0.47, "height": 0.78},
+      "regions": [{"label": "室内丝线轮架", "bbox": {"x": 0.84, "y": 0.50, "width": 0.14, "height": 0.24}}],
+      "visual_note": "已查看原扫描。低分辨率下不为轮架指定精确历史名称。"
+    },
+    {
+      "figure_id": "ai-zhsy-p25-warping",
+      "page_id": "commons-zhsy-gengzhi-tu-1696-p0025",
+      "title": "室外整经作业（AI场景名）",
+      "title_origin": "ai_visual_description",
+      "description": "AI场景描述：左侧庭院中有沿长架展开的多根线，数名妇女分别在架两端及小框旁作业。推测与整经、排列经线有关；具体工序仍待核实，不作古文原文转录。",
+      "bbox": {"x": 0.01, "y": 0.20, "width": 0.47, "height": 0.78},
+      "regions": [{"label": "长线架与小框", "bbox": {"x": 0.11, "y": 0.40, "width": 0.33, "height": 0.47}}],
+      "visual_note": "已查看原扫描。整经属于AI场景解释，不是已确认的工序标签。"
+    },
+    {
+      "figure_id": "ai-zhsy-p25-winding",
+      "page_id": "commons-zhsy-gengzhi-tu-1696-p0025",
+      "title": "丝线绕架作业（AI场景名）",
+      "title_origin": "ai_visual_description",
+      "description": "AI场景描述：右侧庭院中妇女在横杆框架旁处理丝线，房屋内另有多人围坐作业。可供检索绕线、轮架、丝线整理等词，器具准确名称和作用没有独立审核。",
+      "bbox": {"x": 0.52, "y": 0.20, "width": 0.47, "height": 0.78},
+      "regions": [{"label": "庭院横杆框架", "bbox": {"x": 0.54, "y": 0.46, "width": 0.20, "height": 0.25}}],
+      "visual_note": "已查看原扫描。保持画面左右分离，不复制整页OCR到两个图单元。"
+    },
+    {
+      "figure_id": "ai-zhsy-p26-large-loom",
+      "page_id": "commons-zhsy-gengzhi-tu-1696-p0026",
+      "title": "大型织机作业（AI场景名）",
+      "title_origin": "ai_visual_description",
+      "description": "AI场景描述：左侧房屋内为较大型木质织机，画面上方可见多条垂直控制线，机旁有两名操作者。可以比较织机支架、经线与人力操作，但不能据此确认提花机构或历史传承。",
+      "bbox": {"x": 0.01, "y": 0.20, "width": 0.47, "height": 0.78},
+      "regions": [{"label": "大型织机及上方控制线", "bbox": {"x": 0.025, "y": 0.24, "width": 0.31, "height": 0.49}}],
+      "visual_note": "已查看原扫描。保留控制线可见性，暂不命名为某一具体提花机型。"
+    },
+    {
+      "figure_id": "ai-zhsy-p26-hanging",
+      "page_id": "commons-zhsy-gengzhi-tu-1696-p0026",
+      "title": "丝束晾挂作业（AI场景名）",
+      "title_origin": "ai_visual_description",
+      "description": "AI场景描述：右侧屋内外可见多组悬挂丝束、横杆和搬持物料的人物。候选用途是丝束整理与晾挂；是否包含染色或特定后整理步骤不能仅据扫描确定。",
+      "bbox": {"x": 0.52, "y": 0.20, "width": 0.47, "height": 0.78},
+      "regions": [{"label": "悬挂丝束与横杆", "bbox": {"x": 0.66, "y": 0.51, "width": 0.30, "height": 0.34}}],
+      "visual_note": "已查看原扫描。晾挂为AI场景名，不补写看不清的正文。"
+    },
+    {
+      "figure_id": "ai-nlc-p24-fan",
+      "page_id": "commons-nlc-tiangong-kaiwu-2-1637-p0024",
+      "title": "風扇車",
+      "title_origin": "ai_visual_transcription",
+      "title_bbox": {"x": 0.25, "y": 0.31, "width": 0.10, "height": 0.05},
+      "description": "AI场景描述：左页可见风扇车、两名操作者、进料斗和收集筐，推测以人力旋转产生气流用于谷物扬选。横排图题按右至左提出風扇車转录建议；未人工审核。",
+      "bbox": {"x": 0.06, "y": 0.17, "width": 0.42, "height": 0.71},
+      "regions": [{"label": "风扇车主体", "bbox": {"x": 0.065, "y": 0.48, "width": 0.24, "height": 0.26}}],
+      "visual_note": "已查看原扫描与横题。原raw车扇风等字序保留，AI转录独立存在；NLC水印保持。"
+    },
+    {
+      "figure_id": "ai-nlc-p24-huller",
+      "page_id": "commons-nlc-tiangong-kaiwu-2-1637-p0024",
+      "title": "土礱",
+      "title_origin": "ai_visual_transcription",
+      "title_bbox": {"x": 0.75, "y": 0.26, "width": 0.07, "height": 0.05},
+      "description": "AI场景描述：右页可见两人操作的筒状谷物加工器具及杠杆。横排图题按右至左提出土礱转录建议，可作为人力砻谷/脱壳的候选场景；结构和具体操作未人工核实。",
+      "bbox": {"x": 0.51, "y": 0.17, "width": 0.44, "height": 0.71},
+      "regions": [{"label": "筒状谷物加工器具", "bbox": {"x": 0.60, "y": 0.51, "width": 0.20, "height": 0.19}}],
+      "visual_note": "已查看原扫描。礱字转录建议为AI/Inferred；保留原raw及水印。"
+    },
+    {
+      "figure_id": "ai-nlc-p25-water-pestle",
+      "page_id": "commons-nlc-tiangong-kaiwu-2-1637-p0025",
+      "title": "水碓圖",
+      "title_origin": "ai_visual_transcription",
+      "title_bbox": {"x": 0.575, "y": 0.17, "width": 0.10, "height": 0.05},
+      "description": "AI场景描述：一个连续跨页系统，右侧水轮与左侧多根杠杆及臼相连，推测利用水力带动舂捣。图题提出水碓圖转录建议。整幅作为单个图单元，水轮与碓分为局部区域，避免拆断机械联系。",
+      "bbox": {"x": 0.055, "y": 0.16, "width": 0.90, "height": 0.73},
+      "regions": [
+        {"label": "水轮", "bbox": {"x": 0.40, "y": 0.31, "width": 0.34, "height": 0.42}},
+        {"label": "杠杆与碓臼", "bbox": {"x": 0.06, "y": 0.42, "width": 0.32, "height": 0.28}}
+      ],
+      "visual_note": "已查看原扫描。只记录跨页连续可见性；水力功能为AI解释，没有图关系真值。"
+    },
+    {
+      "figure_id": "ai-nlc-p26-water-mill",
+      "page_id": "commons-nlc-tiangong-kaiwu-2-1637-p0026",
+      "title": "水磨",
+      "title_origin": "ai_visual_transcription",
+      "title_bbox": {"x": 0.80, "y": 0.175, "width": 0.08, "height": 0.05},
+      "description": "AI场景描述：一个连续跨页系统，左側水轮通过轴连接右侧带齿圆盘与磨盘，磨盘上方悬有料袋，旁有立柱。推测为水力磨粮与旋转传递，可对照水碓的舂捣用途。不能据相似结构认定历史传承。",
+      "bbox": {"x": 0.055, "y": 0.16, "width": 0.90, "height": 0.73},
+      "regions": [
+        {"label": "水轮与轴", "bbox": {"x": 0.11, "y": 0.28, "width": 0.36, "height": 0.44}},
+        {"label": "带齿磨盘与料袋", "bbox": {"x": 0.56, "y": 0.20, "width": 0.38, "height": 0.41}}
+      ],
+      "visual_note": "已查看原扫描与水磨横题。保留NLC水印、原OCR次序及未审核状态。"
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0",
+  "dataset_kind": "ai_competition_evidence_link_plan",
+  "source_id": "commons-najda-tiangong-kaiwu-2",
+  "source_candidate_sha256": "c4a07f9b9be9bb4b6abdfb8407e7c566008809f31ac7ccba1be8c14e47dd9a57",
+  "review_filename": "ai-assisted-review-overrides.round2.json",
+  "figures": [
+    {
+      "figure_id": "commons-najda-tiangong-kaiwu-2-p0012-f01",
+      "title_id": "commons-najda-tiangong-kaiwu-2-p0012-b003",
+      "label_ids": [],
+      "contexts": [],
+      "functional_drafts": [],
+      "unresolved": ["山箔圖的具体工序须补充可定位正文，不能仅凭图名赋予功能槽。"]
+    },
+    {
+      "figure_id": "commons-najda-tiangong-kaiwu-2-p0012-f02",
+      "title_id": "commons-najda-tiangong-kaiwu-2-p0012-b002",
+      "label_ids": [
+        "commons-najda-tiangong-kaiwu-2-p0012-b008",
+        "commons-najda-tiangong-kaiwu-2-p0012-b007",
+        "commons-najda-tiangong-kaiwu-2-p0012-b009"
+      ],
+      "contexts": [
+        {
+          "item_ids": [
+            "commons-najda-tiangong-kaiwu-2-p0010-b017",
+            "commons-najda-tiangong-kaiwu-2-p0010-b012",
+            "commons-najda-tiangong-kaiwu-2-p0010-b027",
+            "commons-najda-tiangong-kaiwu-2-p0010-b011",
+            "commons-najda-tiangong-kaiwu-2-p0010-b010"
+          ],
+          "rationale": "第10页治絲段明示器具開載後圖；星丁頭与送絲在正文和第12页左图标签对应，拟作跨页工序归属。只附这些框，不附同页調絲段及旁注。"
+        }
+      ],
+      "functional_drafts": [
+        {
+          "slot": "operation", "concept": "引丝与收丝",
+          "rationale": "依据提緒、引入竹針眼与登大關車的工序片段；图文归属尚待独立确认。",
+          "supports": [
+            {"item_id": "commons-najda-tiangong-kaiwu-2-p0010-b012", "quote": "提緒入手引入竹針眼"},
+            {"item_id": "commons-najda-tiangong-kaiwu-2-p0010-b027", "quote": "登大關車"}
+          ]
+        },
+        {
+          "slot": "mechanism", "concept": "送丝与卷绕协作",
+          "rationale": "图中送絲、星丁頭与正文同名构件对应；不将争议的干/于、磨不/磨木作为依据。",
+          "supports": [
+            {"item_id": "commons-najda-tiangong-kaiwu-2-p0012-b008", "quote": "送絲"},
+            {"item_id": "commons-najda-tiangong-kaiwu-2-p0012-b007", "quote": "星丁頭"},
+            {"item_id": "commons-najda-tiangong-kaiwu-2-p0010-b027", "quote": "登大關車"}
+          ]
+        },
+        {
+          "slot": "output", "concept": "排布均匀的丝",
+          "rationale": "该概念只描述所引片段中的排丝目标，不宣称复原了完整古代操作。",
+          "supports": [{"item_id": "commons-najda-tiangong-kaiwu-2-p0010-b011", "quote": "其絲排勻不堆積"}]
+        }
+      ],
+      "unresolved": ["部件b009暂拟不，木/不字形未裁决。", "跨页正文仍有蘭、磨不/磨木、干/于等争议，不参与自动历史结论。"]
+    },
+    {
+      "figure_id": "commons-najda-tiangong-kaiwu-2-p0014-f01",
+      "title_id": "commons-najda-tiangong-kaiwu-2-p0014-b002",
+      "label_ids": ["commons-najda-tiangong-kaiwu-2-p0014-b006"],
+      "contexts": [],
+      "functional_drafts": [],
+      "unresolved": ["掌扇标签与悬线可见；导引/整理经线只是视觉解释，需补相邻正文，暂不填功能槽。"]
+    },
+    {
+      "figure_id": "commons-najda-tiangong-kaiwu-2-p0014-f02",
+      "title_id": "commons-najda-tiangong-kaiwu-2-p0014-b003",
+      "label_ids": ["commons-najda-tiangong-kaiwu-2-p0014-b008"],
+      "contexts": [],
+      "functional_drafts": [],
+      "unresolved": ["经杆/丝线/操作者可见，但缺乏核心范围内明确工序正文；不由外观自动建立功能或驱动关系。"]
+    },
+    {
+      "figure_id": "commons-najda-tiangong-kaiwu-2-p0016-f01",
+      "title_id": "commons-najda-tiangong-kaiwu-2-p0016-b002",
+      "label_ids": [
+        "commons-najda-tiangong-kaiwu-2-p0016-b008", "commons-najda-tiangong-kaiwu-2-p0016-b007",
+        "commons-najda-tiangong-kaiwu-2-p0016-b005", "commons-najda-tiangong-kaiwu-2-p0016-b004",
+        "commons-najda-tiangong-kaiwu-2-p0016-b003", "commons-najda-tiangong-kaiwu-2-p0016-b010",
+        "commons-najda-tiangong-kaiwu-2-p0016-b020", "commons-najda-tiangong-kaiwu-2-p0016-b018",
+        "commons-najda-tiangong-kaiwu-2-p0016-b019", "commons-najda-tiangong-kaiwu-2-p0016-b011",
+        "commons-najda-tiangong-kaiwu-2-p0016-b016", "commons-najda-tiangong-kaiwu-2-p0016-b009",
+        "commons-najda-tiangong-kaiwu-2-p0016-b012", "commons-najda-tiangong-kaiwu-2-p0016-b015",
+        "commons-najda-tiangong-kaiwu-2-p0016-b014", "commons-najda-tiangong-kaiwu-2-p0016-b013"
+      ],
+      "contexts": [
+        {
+          "item_ids": [
+            "commons-najda-tiangong-kaiwu-2-p0018-b008", "commons-najda-tiangong-kaiwu-2-p0018-b007",
+            "commons-najda-tiangong-kaiwu-2-p0018-b006", "commons-najda-tiangong-kaiwu-2-p0018-b005",
+            "commons-najda-tiangong-kaiwu-2-p0018-b004"
+          ],
+          "rationale": "第18页花本段明确花樓、衝脚、梭与見花，第16页花機圖含花樓及衝脚标签，拟作图文归属；排除腰機段，避免把另一类织机的全文混入。"
+        }
+      ],
+      "functional_drafts": [
+        {
+          "slot": "operation", "concept": "提起经线并过梭形成纹样",
+          "rationale": "根据花本段动作片段推断织花用途；不是技术复原或历史传承断言。",
+          "supports": [{"item_id": "commons-najda-tiangong-kaiwu-2-p0018-b005", "quote": "提起衝脚梭過之後居然花現"}]
+        },
+        {
+          "slot": "mechanism", "concept": "花本与花楼配合",
+          "rationale": "结花本、张悬花楼与图内花樓标签对应，形成可审阅的跨页机制草稿。",
+          "supports": [
+            {"item_id": "commons-najda-tiangong-kaiwu-2-p0018-b008", "quote": "結花本"},
+            {"item_id": "commons-najda-tiangong-kaiwu-2-p0018-b006", "quote": "張懸花樓之上"},
+            {"item_id": "commons-najda-tiangong-kaiwu-2-p0016-b003", "quote": "花樓"}
+          ]
+        },
+        {
+          "slot": "output", "concept": "织物纹样",
+          "rationale": "仅记录见花这一文本可追溯目标，置信度没有标定。",
+          "supports": [{"item_id": "commons-najda-tiangong-kaiwu-2-p0018-b004", "quote": "浮經而見花"}]
+        }
+      ],
+      "unresolved": ["b011标签臺卯/臺助未定，保持留空。", "的杠、稱庄等部件字形和两处坑标签仍待裁决，不自动生成因果三元组。"]
+    },
+    {
+      "figure_id": "commons-najda-tiangong-kaiwu-2-p0022-f01",
+      "title_id": "commons-najda-tiangong-kaiwu-2-p0022-f01-title",
+      "label_ids": [],
+      "contexts": [],
+      "functional_drafts": [],
+      "unresolved": ["趕棉的棉/綿版本字形和具体工序待确认；不仅凭轧辊外观断言分离棉籽。"]
+    },
+    {
+      "figure_id": "commons-najda-tiangong-kaiwu-2-p0022-f02",
+      "title_id": "commons-najda-tiangong-kaiwu-2-p0022-b002",
+      "label_ids": ["commons-najda-tiangong-kaiwu-2-p0022-b004"],
+      "contexts": [],
+      "functional_drafts": [],
+      "unresolved": ["彈棉、烘火标签与弓形器具可见，但加工机理需要明确正文；暂不造功能评分标签。"]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "silk-text-image-trace",
+      "name": "治丝：从正文找到图与部件",
+      "figure_ids": ["commons-najda-tiangong-kaiwu-2-p0012-f02"],
+      "aim": "展示图题逆序修订、星丁頭/送絲与具体正文框的跨页联系，再打开原扫描核查；作为证据追踪演示草稿。"
+    },
+    {
+      "case_id": "textile-function-comparison",
+      "name": "治丝与花机：比较不同工序的证据",
+      "figure_ids": ["commons-najda-tiangong-kaiwu-2-p0012-f02", "commons-najda-tiangong-kaiwu-2-p0016-f01"],
+      "aim": "比较引丝/收丝与织花的证据及缺失模态，不预设同功能、困难负例或传承关系，后续独立标注相关性。"
+    }
+  ]
+}

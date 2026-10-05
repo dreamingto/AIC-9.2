@@ -17,6 +17,7 @@ from app.db.models import (
 from app.schemas.common import (
     AssetRef,
     BookSummary,
+    DataStatus,
     EditionSummary,
     EvidenceResponse,
     FigureResponse,
@@ -59,6 +60,21 @@ def text_response(chunk: TextChunk) -> TextChunkResponse:
     return TextChunkResponse.model_validate(chunk)
 
 
+def data_status(figure: Figure) -> DataStatus:
+    provenance = figure.provenance or {}
+    kind = provenance.get("dataset_kind", "unclassified")
+    origin = {
+        "ai_assisted_real_pilot": "ai_assisted",
+        "human_reviewed_real_pilot": "human",
+        "synthetic_fixture": "synthetic_fixture",
+    }.get(kind, "unclassified")
+    return DataStatus(
+        dataset_kind=kind, review_origin=origin,
+        human_reviewed=origin == "human",
+        source_category=provenance.get("source_category", "unspecified"),
+    )
+
+
 def evidence_response(evidence: Evidence) -> EvidenceResponse:
     return EvidenceResponse.model_validate(evidence)
 
@@ -85,6 +101,13 @@ def figure_response(figure: Figure) -> FigureResponse:
             "width": figure.bbox_width,
             "height": figure.bbox_height,
         }
+    traces = {
+        t["text_id"]: t["origin"]
+        for t in (figure.provenance or {}).get("ai_review", {}).get("text_traces", [])
+    }
+    chunks = [text_response(item) for item in figure.text_chunks]
+    for chunk in chunks:
+        chunk.origin = traces.get(chunk.source_pointer)
     return FigureResponse(
         id=figure.id,
         page_id=figure.page_id,
@@ -92,10 +115,12 @@ def figure_response(figure: Figure) -> FigureResponse:
         asset=asset_ref(figure.asset),
         bbox=bbox,
         regions=[region_response(item) for item in figure.regions],
-        text_chunks=[text_response(item) for item in figure.text_chunks],
+        text_chunks=chunks,
         assertions=[assertion_response(item) for item in figure.assertions],
         relations=[relation_response(item) for item in figure.relations],
         evidences=[evidence_response(item) for item in figure.evidences],
+        source=source_summary(figure),
+        data_status=data_status(figure),
     )
 
 

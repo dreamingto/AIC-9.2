@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "dataset_kind": "ai_supplemental_region_proposals",
+  "revision_id": "supplements-v2",
+  "source_id": "commons-najda-tiangong-kaiwu-2",
+  "source_candidate_sha256": "a076d7c01d396c4ef472cb37d705def917bef738917732b250abd0afaa877e4c",
+  "verification_state": "inferred",
+  "requires_human_confirmation": true,
+  "regions": [
+    {
+      "page_id": "commons-najda-tiangong-kaiwu-2-p0010",
+      "box_id": "commons-najda-tiangong-kaiwu-2-p0010-b028",
+      "bbox": {"x": 0.595, "y": 0.18, "width": 0.017, "height": 0.118},
+      "category": "annotation",
+      "role": "interlinear_annotation",
+      "insert_after": "commons-najda-tiangong-kaiwu-2-p0010-b012",
+      "note": "右页正文上方小字右列，拟含混做成如；与左列原b013香箔樣需合读，字形和边界待扫描复核。补框无原raw预测。"
+    },
+    {
+      "page_id": "commons-najda-tiangong-kaiwu-2-p0010",
+      "box_id": "commons-najda-tiangong-kaiwu-2-p0010-b027",
+      "bbox": {"x": 0.574, "y": 0.302, "width": 0.034, "height": 0.563},
+      "category": "text",
+      "role": "body_text",
+      "insert_after": "commons-najda-tiangong-kaiwu-2-p0010-b013",
+      "note": "右页漏列：然後起、斷絕之時止；上方小字独立于正文。保留raw=null，逐字对照扫描后填AI建议，再由人工确认。"
+    },
+    {
+      "page_id": "commons-najda-tiangong-kaiwu-2-p0010",
+      "box_id": "commons-najda-tiangong-kaiwu-2-p0010-b029",
+      "bbox": {"x": 0.216, "y": 0.178, "width": 0.034, "height": 0.47},
+      "category": "text",
+      "role": "body_text",
+      "insert_after": "commons-najda-tiangong-kaiwu-2-p0010-b006",
+      "note": "左页漏列大字如風時轉轉火意照乾是曰出水乾；末部双行小注另设b030，需检查末字边界，不能凭参考版本补字。"
+    },
+    {
+      "page_id": "commons-najda-tiangong-kaiwu-2-p0010",
+      "box_id": "commons-najda-tiangong-kaiwu-2-p0010-b030",
+      "bbox": {"x": 0.216, "y": 0.648, "width": 0.039, "height": 0.216},
+      "category": "annotation",
+      "role": "interlinear_annotation",
+      "insert_after": "commons-najda-tiangong-kaiwu-2-p0010-b029",
+      "note": "左页漏列末部双行小注，拟含若晴光又風則不用火；顶部另有似地色的字形不能直接省去。与b029大字分开，完整文字/双行读序需扫描复核，暂不按参考版填字。"
+    }
+  ]
+}

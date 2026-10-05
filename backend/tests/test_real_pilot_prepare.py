@@ -22,7 +22,14 @@ from scripts.prepare_real_pilot import (
 
 def test_real_source_manifest_contains_verified_hashes() -> None:
     sources = _load_sources()
-    assert len(sources) == 2
+    assert {source["source_id"] for source in sources}.issuperset(
+        {
+            "commons-najda-tiangong-kaiwu-2",
+            "commons-najda-nongzheng-quanshu-1",
+            "commons-zhsy-gengzhi-tu-1696",
+            "commons-nlc-tiangong-kaiwu-2-1637",
+        }
+    )
     assert all(len(source["sha256"]) == 64 for source in sources)
     assert sources[0]["sha256"] != sources[1]["sha256"]
 

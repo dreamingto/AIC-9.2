@@ -250,6 +250,18 @@ class EmbeddingRecord(Timestamped, Base):
 
     __table_args__ = (
         Index("ix_embedding_entity_modality", "entity_type", "entity_id", "modality"),
+        Index(
+            "ix_embedding_model_space",
+            "entity_type",
+            "entity_id",
+            "modality",
+            "provider",
+            "model",
+            "version",
+            "dimension",
+            "preprocessing_hash",
+            unique=True,
+        ),
     )
 
 

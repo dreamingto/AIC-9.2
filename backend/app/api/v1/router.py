@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from pathlib import Path
@@ -88,7 +89,8 @@ async def health(request: Request) -> HealthResponse:
 @router.get("/capabilities", response_model=CapabilitiesResponse)
 async def capabilities(settings: Settings = Depends(settings_dependency)) -> CapabilitiesResponse:
     providers = []
-    for health_item in ProviderRegistry.create().health():
+    health_items = await asyncio.to_thread(ProviderRegistry.create(settings).health)
+    for health_item in health_items:
         providers.append(
             ProviderStatus(
                 name=health_item.provider,
@@ -101,7 +103,9 @@ async def capabilities(settings: Settings = Depends(settings_dependency)) -> Cap
             )
         )
     return CapabilitiesResponse(
-        search_types=["text", "image", "region"],
+        search_types=(
+            ["text", "image", "region"] if all(item.available for item in health_items) else []
+        ),
         verification_states=[
             VerificationState.WORTH_COMPARING,
             VerificationState.REJECTED,

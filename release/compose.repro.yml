@@ -1,0 +1,14 @@
+# Use with a separate --project-name and the three normal Compose files.
+# No original database volume is reused. Compose >= 2.24.4 required (!override).
+services:
+  db:
+    environment:
+      POSTGRES_DB: tuji_reviewed_real_test
+    ports: !override ['55432:5432']
+  backend:
+    environment:
+      DATABASE_URL: postgresql+asyncpg://tuji:tuji@db:5432/tuji_reviewed_real_test
+      SYNC_DATABASE_URL: postgresql+psycopg://tuji:tuji@db:5432/tuji_reviewed_real_test
+    ports: !override ['8001:8000']
+  frontend:
+    ports: !override ['8088:80']

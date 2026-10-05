@@ -118,3 +118,12 @@ def test_reliability_and_availability_are_explicit() -> None:
     assert result.components.reliability["visual"] == pytest.approx(0.5)
     assert result.components.reliability["text"] == 0.0
     assert "text" in result.components.missing_modalities
+def test_unavailable_cfr_and_pair_evidence_are_not_numeric_estimates() -> None:
+    result = score_candidate(
+        {"st": 0.8, "sf": None}, evidence_score=None, model_uncertainty_score=None,
+    )
+    assert result.components.availability["function"] is False
+    assert result.components.availability["evidence"] is False
+    assert result.components.availability["model_uncertainty"] is False
+    assert result.components.contributions["u_model"] == 0.0
+    assert result.components.contributions["se"] == 0.0

@@ -1,0 +1,11 @@
+# AI-assisted competition corpus; does not require or impersonate human truth.
+# Prepare selected scans first: python -m scripts.prepare_domestic_ai_manifest
+services:
+  backend:
+    volumes:
+      - type: bind
+        source: ./backend/data/assets/ai_real_v1
+        target: /app/data/assets/ai_real_v1
+        read_only: true
+        bind:
+          create_host_path: false

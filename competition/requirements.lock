@@ -1,0 +1,5 @@
+# Separate artifact-authoring environment; Windows system SimSun and Huihui required.
+reportlab==4.4.9
+pypdf==6.10.0
+Pillow==12.3.0
+imageio-ffmpeg==0.6.0

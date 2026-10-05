@@ -90,7 +90,10 @@ export default function SourcesPage() {
                   <tr key={`${book.id}-${ed.id}`}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{book.title}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{book.author || '未知'} ({book.era || '未知'})</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{ed.name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {ed.name}
+                      <span className="block text-xs mt-1">{ed.source_name}</span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${ed.allow_redistribution ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                         {ed.allow_redistribution ? '允许再分发 ' : '禁止再分发 '}

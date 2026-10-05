@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "selection_id": "chinese-textile-supplement-12-v1",
+  "selection_state": "inferred_pilot_scope",
+  "purpose": "国内来源纺织技术图页的 raw OCR 与后续复核准备；非评测真值。原扫描水印保留。",
+  "page_ids": [
+    "commons-nlc-tiangong-kaiwu-2-1637-p0022",
+    "commons-nlc-tiangong-kaiwu-2-1637-p0023",
+    "commons-nlc-tiangong-kaiwu-2-1637-p0024",
+    "commons-nlc-tiangong-kaiwu-2-1637-p0025",
+    "commons-nlc-tiangong-kaiwu-2-1637-p0026",
+    "commons-nlc-tiangong-kaiwu-2-1637-p0027",
+    "commons-zhsy-gengzhi-tu-1696-p0021",
+    "commons-zhsy-gengzhi-tu-1696-p0022",
+    "commons-zhsy-gengzhi-tu-1696-p0023",
+    "commons-zhsy-gengzhi-tu-1696-p0024",
+    "commons-zhsy-gengzhi-tu-1696-p0025",
+    "commons-zhsy-gengzhi-tu-1696-p0026"
+  ],
+  "disclaimer": "选页基于扫描缩略图内容初筛；图题、版面、功能和关联未经人工确认，not_evaluated。"
+}

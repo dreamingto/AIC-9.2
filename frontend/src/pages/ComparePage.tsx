@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAPI, APIError, toAPIError } from '../api/client';
 import { CandidateResponseSchema, SearchResponseSchema, VerificationResponseSchema } from '../types';
 import type { CandidateResponse, CapabilitiesResponse, SearchResponse, VerificationState } from '../types';
+import DataStatusNotice from '../components/DataStatusNotice';
 
 const SCORE_COMPONENT_KEYS = ['sv', 'st', 'sr', 'sf', 'sg', 'se', 'u_model'] as const;
 
@@ -113,6 +114,8 @@ export default function ComparePage({ capabilities }: { capabilities: Capabiliti
         <button onClick={() => navigate(-1)} className="text-sm text-gray-500 hover:text-gray-900">&larr; 返回</button>
       </div>
 
+      <DataStatusNotice status={data.data_status} />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white shadow rounded-lg p-4">
            <h3 className="font-medium mb-4 text-center">查询背景 (Search ID: {data.search_id})</h3>
@@ -215,7 +218,12 @@ export default function ComparePage({ capabilities }: { capabilities: Capabiliti
                    <li key={a.id}>{a.slot}: {a.concept} <span className="text-xs bg-gray-100 rounded px-1">{a.state}</span></li>
                  ))}
               </ul>
-              <p className="text-xs mt-1 text-gray-400">推断不确定度: {data.cfr_summary.uncertainty.toFixed(2)} | 全局不确定度: {JSON.stringify(data.uncertainty)}</p>
+              <p className="text-xs mt-1 text-gray-500">
+                推断不确定度：{data.score_components.availability?.model_uncertainty
+                  ? data.cfr_summary.uncertainty.toFixed(2) : '不可用（无功能置信度）'}
+                {' · '}资料缺失率：{typeof data.uncertainty.material_missingness === 'number'
+                  ? `${(data.uncertainty.material_missingness * 100).toFixed(0)}%` : '不可用'}
+              </p>
            </div>
            <div>
               <h3 className="font-medium mb-2 border-b">证据记录 (Evidence)</h3>

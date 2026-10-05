@@ -202,8 +202,8 @@ _MODALITY_NAMES = {"sv": "visual", "st": "text", "sr": "region", "sf": "function
 def score_candidate(
     scores: Mapping[str, float | None],
     *,
-    evidence_score: float = 0.0,
-    model_uncertainty_score: float = 0.0,
+    evidence_score: float | None = 0.0,
+    model_uncertainty_score: float | None = 0.0,
     weights: EAFRWeights | None = None,
     modality_reliability: Mapping[str, float] | None = None,
     availability: Mapping[str, bool] | None = None,
@@ -241,8 +241,16 @@ def score_candidate(
         key: coefficients[key] * values[key] * reliability[_MODALITY_NAMES[key]]
         for key in coefficients
     }
-    se = clip(float(evidence_score))
-    u_model = clip(float(model_uncertainty_score))
+    for name, value in (
+        ("evidence", evidence_score),
+        ("model_uncertainty", model_uncertainty_score),
+    ):
+        available[name] = value is not None
+        reliability[name] = 1.0 if value is not None else 0.0
+        if value is None:
+            missing.append(name)
+    se = clip(float(evidence_score)) if evidence_score is not None else 0.0
+    u_model = clip(float(model_uncertainty_score)) if model_uncertainty_score is not None else 0.0
     contributions["se"] = current.lambda_e * se
     contributions["u_model"] = -current.lambda_u * u_model
     total = sum(contributions.values())

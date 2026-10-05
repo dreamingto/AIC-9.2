@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.api.v1.demo import router as demo_router
 from app.api.v1.router import router as v1_router
 from app.core.config import get_settings
 from app.core.errors import DomainError
@@ -71,6 +72,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     application.include_router(v1_router)
+    application.include_router(demo_router)
 
     @application.exception_handler(DomainError)
     async def domain_error_handler(request: Request, exc: DomainError) -> JSONResponse:

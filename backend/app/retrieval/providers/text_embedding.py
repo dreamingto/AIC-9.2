@@ -32,3 +32,6 @@ class DeterministicTextEmbeddingProvider(OfflineProvider):
 
     def encode_many(self, texts: list[str] | tuple[str, ...]) -> tuple[VectorResult, ...]:
         return tuple(self.encode(text) for text in texts)
+
+    def encode_query(self, text: str) -> VectorResult:
+        return self.encode(text)

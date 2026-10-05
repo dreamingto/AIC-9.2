@@ -119,6 +119,7 @@ def _render_pages(
     output_root: Path,
     dpi: int,
     force: bool,
+    max_image_side: int | None = None,
 ) -> list[Path]:
     executable = shutil.which("pdftoppm")
     if executable is None:
@@ -135,6 +136,7 @@ def _render_pages(
 
     with tempfile.TemporaryDirectory(prefix=f".{source_id}-", dir=output_root) as temporary:
         temporary_prefix = Path(temporary) / "page"
+        scaling = ["-scale-to", str(max_image_side)] if max_image_side else []
         try:
             subprocess.run(
                 [
@@ -142,6 +144,7 @@ def _render_pages(
                     "-png",
                     "-r",
                     str(dpi),
+                    *scaling,
                     "-f",
                     "1",
                     "-l",
@@ -224,17 +227,20 @@ def prepare(
     inventory_path: Path = DEFAULT_INVENTORY,
     dpi: int = 150,
     force: bool = False,
+    max_image_side: int | None = None,
 ) -> dict[str, Any]:
     if not 72 <= dpi <= 300:
         raise ValueError("dpi must be between 72 and 300")
+    if max_image_side is not None and (
+        isinstance(max_image_side, bool) or not 512 <= max_image_side <= 10000
+    ):
+        raise ValueError("max_image_side must be between 512 and 10000")
     sources = _load_sources()
     selected = [
         source
         for source in sources
-        if (
-            source_ids is None
-            and str(source.get("pilot_selection", "")).startswith("primary")
-        ) or (source_ids is not None and source["source_id"] in source_ids)
+        if (source_ids is None and str(source.get("pilot_selection", "")).startswith("primary"))
+        or (source_ids is not None and source["source_id"] in source_ids)
     ]
     if not selected:
         raise RealPilotPreparationError("no sources selected")
@@ -260,6 +266,7 @@ def prepare(
             output_root,
             dpi,
             force,
+            max_image_side,
         )
         source_pages = [
             _page_record(source, page_number, image_path)
@@ -272,6 +279,7 @@ def prepare(
                 "pdf_filename": source["local_filename"],
                 "page_count": len(source_pages),
                 "dpi": dpi,
+                "max_image_side": max_image_side,
                 "status": "rendered_pending_annotation",
             }
         )
@@ -283,8 +291,7 @@ def prepare(
         "generated_at": datetime.now(UTC).isoformat(),
         "pipeline_version": "real-pilot-pages-v1",
         "disclaimer": (
-            "页面已从真实馆藏扫描渲染；OCR、版面、图题和功能标注尚未完成，"
-            "not_evaluated。"
+            "页面已从真实馆藏扫描渲染；OCR、版面、图题和功能标注尚未完成，not_evaluated。"
         ),
         "sources": source_results,
         "pages": pages,
@@ -301,20 +308,28 @@ def main() -> int:
     parser.add_argument("--source-id", action="append", dest="source_ids")
     parser.add_argument("--all-sources", action="store_true")
     parser.add_argument("--dpi", type=int, default=150)
+    parser.add_argument("--inventory-path", type=Path, default=DEFAULT_INVENTORY)
+    parser.add_argument("--max-image-side", type=int)
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
     source_ids = set(args.source_ids or []) if args.source_ids else None
     if args.all_sources:
         source_ids = {source["source_id"] for source in _load_sources()}
     try:
-        inventory = prepare(source_ids=source_ids, dpi=args.dpi, force=args.force)
+        inventory = prepare(
+            source_ids=source_ids,
+            dpi=args.dpi,
+            force=args.force,
+            inventory_path=args.inventory_path.resolve(),
+            max_image_side=args.max_image_side,
+        )
     except (RealPilotPreparationError, ValueError) as exc:
         parser.error(str(exc))
     print(
         json.dumps(
             {
                 "status": "passed",
-                "inventory": str(DEFAULT_INVENTORY),
+                "inventory": str(args.inventory_path.resolve()),
                 "sources": len(inventory["sources"]),
                 "pages": len(inventory["pages"]),
                 "evaluation_status": inventory["evaluation_status"],

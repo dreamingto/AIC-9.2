@@ -11,7 +11,7 @@ from typing import Any
 from PIL import Image, UnidentifiedImageError
 from pydantic import ValidationError
 
-from .contracts import FixtureManifest, ValidatedFixture
+from .contracts import AIRealManifest, FixtureManifest, RealManifest, ValidatedFixture
 
 MANIFEST_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*\.json$")
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -106,11 +106,15 @@ def _read_json(manifest_path: Path) -> dict[str, Any]:
     return payload
 
 
-def parse_manifest(manifest_path: Path) -> FixtureManifest:
+def parse_manifest(manifest_path: Path) -> FixtureManifest | RealManifest | AIRealManifest:
     """Parse and cross-reference-check a manifest without touching assets."""
 
     payload = _read_json(manifest_path)
     try:
+        if payload.get("dataset_kind") == "ai_assisted_real_pilot":
+            return AIRealManifest.model_validate(payload)
+        if payload.get("dataset_kind") == "human_reviewed_real_pilot":
+            return RealManifest.model_validate(payload)
         return FixtureManifest.model_validate(payload)
     except ValidationError as exc:
         # Keep Pydantic's useful field paths while exposing a stable exception
@@ -188,7 +192,7 @@ def _validate_png(
 
 
 def validate_assets(
-    manifest: FixtureManifest,
+    manifest: FixtureManifest | RealManifest | AIRealManifest,
     *,
     assets_root: Path,
     max_asset_bytes: int = DEFAULT_MAX_ASSET_BYTES,

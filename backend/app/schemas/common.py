@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -45,6 +45,14 @@ class SourceSummary(APIModel):
     license_status: str
 
 
+class DataStatus(APIModel):
+    dataset_kind: str = "unclassified"
+    review_origin: str = "unclassified"
+    human_reviewed: bool = False
+    source_category: str = "unspecified"
+    evaluation_status: Literal["not_evaluated"] = "not_evaluated"
+
+
 class BookSummary(APIModel):
     id: UUID
     title: str
@@ -79,6 +87,7 @@ class TextChunkResponse(APIModel):
     corrected_text: str | None = None
     source_pointer: str | None = None
     state: EvidenceState
+    origin: str | None = None
 
 
 class EvidenceResponse(APIModel):
@@ -119,6 +128,8 @@ class FigureResponse(APIModel):
     assertions: list[FunctionalAssertionResponse] = Field(default_factory=list)
     relations: list[RelationResponse] = Field(default_factory=list)
     evidences: list[EvidenceResponse] = Field(default_factory=list)
+    source: SourceSummary | None = None
+    data_status: DataStatus = Field(default_factory=DataStatus)
 
 
 class PageResponse(APIModel):
@@ -160,6 +171,9 @@ class CapabilitiesResponse(APIModel):
 class SearchFilters(APIModel):
     book_ids: list[UUID] = Field(default_factory=list, max_length=50)
     edition_ids: list[UUID] = Field(default_factory=list, max_length=50)
+    dataset_kinds: list[Literal[
+        "synthetic_fixture", "ai_assisted_real_pilot", "human_reviewed_real_pilot"
+    ]] = Field(default_factory=list, max_length=3)
 
 
 class TextSearchRequest(APIModel):
@@ -247,6 +261,8 @@ class SearchResult(APIModel):
     evidence: list[EvidenceResponse] = Field(default_factory=list)
     uncertainty: dict[str, float] = Field(default_factory=dict)
     verification_state: VerificationState
+    title: str | None = None
+    data_status: DataStatus = Field(default_factory=DataStatus)
 
 
 class SearchResponse(APIModel):

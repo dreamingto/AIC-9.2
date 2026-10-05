@@ -6,6 +6,7 @@ import FigurePage from './pages/FigurePage';
 import ComparePage from './pages/ComparePage';
 import SourcesPage from './pages/SourcesPage';
 import NotFoundPage from './pages/NotFoundPage';
+import DemoPage from './pages/DemoPage';
 import { fetchAPI, getErrorMessage } from './api/client';
 import type { CapabilitiesResponse } from './types';
 import { CapabilitiesResponseSchema } from './types';
@@ -42,6 +43,7 @@ function App() {
           <Route path="figures/:figureId" element={<FigurePage />} />
           <Route path="compare/:candidateId" element={<ComparePage capabilities={capabilities} />} />
           <Route path="sources" element={<SourcesPage />} />
+          <Route path="demo" element={<DemoPage capabilities={capabilities} />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

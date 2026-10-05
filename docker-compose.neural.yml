@@ -1,0 +1,9 @@
+# Host-side GPU worker: backend/model_runtime/start.ps1.
+# Always include the ai-real overlay when using the domestic real corpus.
+services:
+  backend:
+    environment:
+      RETRIEVAL_PROFILE: neural
+      MODEL_SERVICE_URL: http://host.docker.internal:8767
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

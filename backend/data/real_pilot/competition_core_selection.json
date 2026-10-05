@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "dataset_kind": "competition_review_selection",
+  "source_id": "commons-najda-tiangong-kaiwu-2",
+  "selection_status": "selected_pending_human_truth",
+  "evaluation_status": "not_evaluated",
+  "page_numbers": [10, 12, 14, 16, 18, 22],
+  "selection_basis": {
+    "10": "竖排正文与复杂字符；按真实框数选取，不按模型得分选取。",
+    "12": "技术图、图题与部件标签；蚕桑相关候选。",
+    "14": "技术图、图题及结构细节；溜眼/经耙等整经相关候选。",
+    "16": "正文与技术图混排；织造相关候选。",
+    "18": "密集竖排正文；识别与阅读顺序压力样本。",
+    "22": "技术图与漏检图题；检验图题定位召回。"
+  },
+  "expected_retained_boxes": 101,
+  "expected_figure_candidates": 7,
+  "expected_missing_caption_candidates": 1,
+  "disclaimer": "这只是预先固定的人工复核范围，不是已冻结的真值或研究结果。候选类别和图名仍为 Inferred。原先 120—180 框为估算，实际范围为 101 框、109 个复核项。"
+}

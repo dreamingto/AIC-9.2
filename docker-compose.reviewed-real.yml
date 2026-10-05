@@ -1,0 +1,11 @@
+# Optional: enable only after the human-gated exporter creates reviewed_real_v1.
+# Raw PDFs, OCR drafts and review exports remain outside the business container.
+services:
+  backend:
+    volumes:
+      - type: bind
+        source: ./backend/data/assets/reviewed_real_v1
+        target: /app/data/assets/reviewed_real_v1
+        read_only: true
+        bind:
+          create_host_path: false

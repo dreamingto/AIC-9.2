@@ -8,6 +8,7 @@ import SearchPage from './SearchPage';
 import FigurePage from './FigurePage';
 import ComparePage from './ComparePage';
 import SourcesPage from './SourcesPage';
+import DataStatusNotice from '../components/DataStatusNotice';
 import { mockCapabilities, server } from '../setupTests';
 import { http, HttpResponse } from 'msw';
 
@@ -29,6 +30,30 @@ Object.defineProperty(window, 'matchMedia', {
 describe('Comprehensive Frontend Scenarios', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
+  });
+
+  it('AI competition corpus filter is sent to the API and keeps explicit AI attribution', async () => {
+    let captured: unknown;
+    server.use(http.post('/api/v1/search/text', async ({ request }) => {
+      captured = await request.json();
+      return HttpResponse.json({
+        search_id: '123e4567-e89b-12d3-a456-426614174000',
+        query_summary: { type: 'text', query: '织机' },
+        results: [], latency_ms: 1, model_versions: {},
+      });
+    }));
+    render(<MemoryRouter><SearchPage capabilities={mockCapabilities} />
+      <DataStatusNotice status={{ dataset_kind: 'ai_assisted_real_pilot', review_origin: 'ai_assisted',
+        human_reviewed: false, source_category: 'domestic_publication', evaluation_status: 'not_evaluated' }} />
+    </MemoryRouter>);
+    fireEvent.change(screen.getByRole('combobox', { name: '检索数据' }), {
+      target: { value: 'ai_assisted_real_pilot' },
+    });
+    fireEvent.change(screen.getByLabelText('检索词'), { target: { value: '织机' } });
+    fireEvent.click(screen.getByRole('button', { name: '搜索' }));
+    await waitFor(() => expect(captured).toEqual({ query: '织机', top_k: 10,
+      filters: { book_ids: [], edition_ids: [], dataset_kinds: ['ai_assisted_real_pilot'] } }));
+    expect(screen.getByText(/国内出版来源 · AI 辅助整理/)).toHaveTextContent('未评测');
   });
 
   it('1. App fetches capabilities', async () => {
@@ -263,7 +288,7 @@ describe('Comprehensive Frontend Scenarios', () => {
     fireEvent.click(screen.getByRole('tab', { name: /区域/i }));
 
     // Choose page_id
-    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'page_id' } });
+    fireEvent.change(screen.getByRole('combobox', { name: '来源类型' }), { target: { value: 'page_id' } });
     fireEvent.change(screen.getByPlaceholderText(/输入UUID/i), { target: { value: '123e4567-e89b-12d3-a456-426614174000' } });
     fireEvent.change(screen.getByLabelText('X'), { target: { value: '0.1' } });
     fireEvent.change(screen.getByLabelText('Y'), { target: { value: '0.1' } });
@@ -277,6 +302,7 @@ describe('Comprehensive Frontend Scenarios', () => {
 
     expect(capturedBody).toEqual({
       page_id: '123e4567-e89b-12d3-a456-426614174000',
+      filters: { book_ids: [], edition_ids: [] },
       coordinate_space: 'normalized',
       top_k: 10,
       bbox: { x: 0.1, y: 0.1, width: 0.5, height: 0.5 },

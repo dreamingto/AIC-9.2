@@ -7,6 +7,7 @@ export default function Layout({ capabilities }: { capabilities: CapabilitiesRes
   const navItems = [
     { to: '/search', icon: Search, label: '跨文献关联检索' },
     { to: '/sources', icon: BookOpen, label: '文献来源' },
+    { to: '/demo', icon: BookOpen, label: '国内古籍演示' },
   ];
 
   const providerStatus = capabilities.providers.every(p => p.available) ? 'available' : 'degraded';

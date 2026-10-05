@@ -32,6 +32,8 @@ def test_openapi_contains_complete_v1_surface() -> None:
         "/api/v1/associations/{candidate_id}/verify",
         "/api/v1/ingestion/jobs",
         "/api/v1/ingestion/jobs/{job_id}",
+        "/api/v1/demo/cases",
+        "/api/v1/demo/cases/{case_id}/search",
     }
 
 
@@ -66,6 +68,33 @@ def test_health_reports_database_unavailable(monkeypatch: pytest.MonkeyPatch) ->
         response = client.get("/api/v1/health")
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "DATABASE_UNAVAILABLE"
+
+
+def test_neural_unavailable_capability_and_search_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    from app.api.deps import settings_dependency
+    from app.retrieval.providers.neural import NeuralProvider
+
+    def unavailable(*args: object, **kwargs: object) -> None:
+        raise ConnectionError("worker unavailable")
+
+    async def no_figures(session: object) -> list[object]:
+        return []
+
+    monkeypatch.setattr(NeuralProvider, "_request", unavailable)
+    monkeypatch.setattr("app.services.search_service.list_figures_for_search", no_figures)
+    app.dependency_overrides[settings_dependency] = lambda: Settings(retrieval_profile="neural")
+    try:
+        with TestClient(app) as client:
+            response = client.get("/api/v1/capabilities")
+            assert response.status_code == 200
+            assert response.json()["search_types"] == []
+            assert any(not provider["available"] for provider in response.json()["providers"])
+            search = client.post("/api/v1/search/text", json={"query": "织机"})
+            assert search.status_code == 503
+            assert search.json()["error"]["code"] == "MODEL_UNAVAILABLE"
+            assert search.json()["error"]["request_id"] == search.headers["x-request-id"]
+    finally:
+        app.dependency_overrides.clear()
 
 
 def _png_bytes() -> bytes:

@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>机图索隐 · 古籍复核</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.5 "Microsoft YaHei", sans-serif; color: #172b36; background: #f3f5f6; }
+    header { padding: 12px 18px; border-bottom: 1px solid #ccd6dc; background: white; }
+    h1 { margin: 0; font-size: 20px; } h2 { font-size: 15px; margin: 0 0 10px; }
+    button, input, select, textarea { font: inherit; }
+    button, select, input, textarea { border: 1px solid #aebfc8; border-radius: 4px; padding: 7px 9px; background: white; color: inherit; }
+    button { cursor: pointer; } button:disabled { cursor: default; opacity: .5; }
+    button.primary { background: #146d82; border-color: #146d82; color: white; }
+    button:hover:not(:disabled) { border-color: #146d82; }
+    :focus-visible { outline: 2px solid #126e83; outline-offset: 2px; }
+    .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+    label { display: grid; gap: 4px; } .check { display: flex; align-items: center; gap: 6px; }
+    .meta { font-size: 12px; color: #5e737e; overflow-wrap: anywhere; }
+    #message { min-height: 22px; color: #8a402f; }
+    main { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: calc(100vh - 170px); }
+    aside { border-right: 1px solid #d1dbe0; background: #fff; padding: 12px; }
+    #list { display: grid; gap: 4px; max-height: 70vh; overflow-y: auto; margin-top: 10px; }
+    #list button { text-align: left; overflow-wrap: anywhere; font-size: 12px; }
+    #list button[aria-current="true"] { background: #e7f2f4; border-color: #146d82; }
+    article { min-width: 0; padding: 16px; }
+    .stage { display: grid; grid-template-columns: minmax(200px, 320px) minmax(0, 1fr); gap: 16px; }
+    .crop { width: 100%; height: 500px; object-fit: contain; background: #e7ecef; }
+    .crop.inspect-long { height: 1000px; }
+    .texts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .text { white-space: pre-wrap; overflow-wrap: anywhere; min-height: 64px; padding: 8px 0; border-top: 1px solid #ccd7dd; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr 100px; gap: 10px; margin: 10px 0; }
+    .fields input, .fields select { min-width: 0; width: 100%; }
+    textarea { width: 100%; min-height: 90px; resize: vertical; }
+    .bbox { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+    .bbox input { width: 100%; }
+    details { margin-top: 16px; border-top: 1px solid #ccd7dd; padding-top: 12px; }
+    .page-wrap { position: relative; width: 100%; margin-top: 10px; }
+    #page-image { display: block; width: 100%; height: auto; }
+    #overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .status { color: #17654f; font-size: 12px; }
+    @media (max-width: 1000px) { .stage { grid-template-columns: 220px minmax(0, 1fr); } .fields { grid-template-columns: 1fr; } }
+    @media (max-width: 700px) { main { display: block; } aside { border-right: 0; border-bottom: 1px solid #ccd7dd; } #list { max-height: 150px; } .stage { grid-template-columns: 1fr; } .crop { height: 360px; } .texts { grid-template-columns: 1fr; } .bar label { max-width: 100%; } select { max-width: 100%; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>机图索隐 · 古籍复核</h1>
+  <div class="meta">《天工开物》第二册 · 转录、版面、阅读顺序与图题</div>
+  <div id="review-origin" class="meta"></div>
+  <div class="bar">
+    <label>范围<select id="scope-filter"><option value="all">全部 28 页</option><option value="core">比赛核心页</option></select></label>
+    <label>页面<select id="page"></select></label>
+    <label>队列<select id="filter"><option value="focus">优先复核</option><option value="all">全部候选</option><option value="critical">关键冲突</option><option value="deferred">延后项</option><option value="pending">未确认</option></select></label>
+    <label>复核人<input id="reviewer" maxlength="120" autocomplete="off"></label>
+    <button id="export" class="primary">导出确认文件</button>
+    <span id="summary" class="status" aria-live="polite"></span>
+  </div>
+  <div id="message" role="status" aria-live="polite"></div>
+  <details id="export-preview" hidden><summary>导出内容预览</summary><label>导出 JSON<textarea id="export-json" readonly></textarea></label></details>
+</header>
+<main>
+  <aside>
+    <div class="bar"><button id="prev" title="上一项">↑</button><button id="next" title="下一项">↓</button><span id="position"></span></div>
+    <div id="list"></div>
+  </aside>
+  <article id="editor"></article>
+</main>
+<script>
+const DATA = __REVIEW_DATA__;
+const $ = id => document.getElementById(id);
+const AI = DATA.review_origin === "ai_assisted";
+const key = (AI ? "jitu-ai-review-v1-" : "jitu-review-v2-") + DATA.source_candidate_sha256;
+$("review-origin").textContent = AI ? "AI 辅助复核 · 全部修订仍待人工确认，不作为独立评测真值" : "人工复核 · 请逐项对照扫描";
+if (AI) $("export").textContent = "导出 AI 辅助修订";
+let saved = {}, pageReviews = {}, inventoryReviews = {};
+const seed = AI ? Object.fromEntries((DATA.ai_review_seed || []).map(r => [r.box_or_figure_id, r])) : {};
+try { saved = {...seed,...JSON.parse(localStorage.getItem(key) || "{}")}; pageReviews = JSON.parse(localStorage.getItem(key + "-pages") || "{}"); inventoryReviews = JSON.parse(localStorage.getItem(key + "-inventory") || "{}"); } catch { saved = {...seed}; pageReviews = {}; inventoryReviews = {}; }
+const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pages = [...new Set(DATA.items.map(item => item.page_id))];
+const short = id => id.replace(DATA.source_id + "-", "");
+const categories = {text:"正文",caption:"图题/部件标签",figure:"技术图",annotation:"旁注",unknown:"未知"};
+let selected = null, visible = [];
+function fillPages() {
+  const previous = $("page").value;
+  const core = DATA.core_page_ids || [];
+  const allowed = $("scope-filter").value === "core" && core.length ? core : pages;
+  $("page").replaceChildren();
+  for (const id of allowed) { const option = document.createElement("option"); option.value = id; option.textContent = short(id); $("page").append(option); }
+  if (allowed.includes(previous)) $("page").value = previous;
+}
+$("scope-filter").value = DATA.core_page_ids?.length ? "core" : "all";
+$("scope-filter").options[1].disabled = !DATA.core_page_ids?.length;
+if (DATA.core_page_ids?.length) $("filter").value = "all";
+fillPages();
+$("reviewer").value = localStorage.getItem(key + "-reviewer") || "";
+function persist() { localStorage.setItem(key, JSON.stringify(saved)); localStorage.setItem(key + "-pages", JSON.stringify(pageReviews)); localStorage.setItem(key + "-inventory", JSON.stringify(inventoryReviews)); }
+function info(text) { $("message").textContent = text; }
+function refresh() {
+  const page = $("page").value, filter = $("filter").value;
+  visible = DATA.items.filter(item => item.page_id === page && (filter === "all" || (filter === "focus" && item.priority !== "deferred") || (filter === "pending" && !saved[item.id]?.confirmed) || item.priority === filter));
+  if (!visible.some(item => item.id === selected)) selected = visible[0]?.id || null;
+  const list = $("list"); list.replaceChildren();
+  for (const item of visible) {
+    const button = document.createElement("button"); button.dataset.id = item.id;
+    button.textContent = `${saved[item.id]?.confirmed ? (AI ? "AI 已检查 · " : "已确认 · ") : ""}${short(item.id)} · ${categories[saved[item.id]?.category || item.category_candidate]}`;
+    button.setAttribute("aria-current", String(item.id === selected)); button.onclick = () => { selected = item.id; info(""); refresh(); }; list.append(button);
+  }
+  const index = visible.findIndex(item => item.id === selected);
+  $("position").textContent = visible.length ? `${index + 1} / ${visible.length}` : "0 / 0";
+  $("prev").disabled = index <= 0; $("next").disabled = index < 0 || index >= visible.length - 1;
+  const done = DATA.items.filter(item => saved[item.id]?.confirmed).length;
+  $("summary").textContent = `${AI ? "AI 已检查" : "已确认"} ${done} / ${DATA.items.length} · 优先 ${DATA.statistics.queue_items}`;
+  renderEditor(DATA.items.find(item => item.id === selected));
+}
+function renderEditor(item) {
+  const editor = $("editor");
+  if (!item) { delete editor.dataset.itemId; editor.textContent = "本页当前队列为空"; return; }
+  editor.dataset.itemId = item.id;
+  const decision = saved[item.id] || {}, box = decision.bbox || item.bbox;
+  const suggestion = item.consensus_candidate || item.normalized_candidate || item.candidate_title || "";
+  editor.innerHTML = `<h2>${esc(short(item.id))} <span class="meta">${esc(item.role_candidate)} · Inferred</span></h2>
+    <div class="stage"><div><img class="crop${AI && box.height / box.width > 8 ? " inspect-long" : ""}" src="${esc(item.crop_path)}" alt="${esc(short(item.id))} 扫描裁剪"><div class="meta">${esc(item.reasons.join(" · "))}</div></div>
+    <div><div class="texts">
+      <div><b>原始 OCR</b><div class="text">${esc(item.raw_text ?? "（无 OCR 框）")}</div></div>
+      <div><b>PP-OCRv5 server</b><div class="text">${esc(item.server_ocr?.text || "（无）")}</div><div class="meta">置信度 ${item.server_ocr ? Number(item.server_ocr.confidence).toFixed(3) : "—"}</div></div>
+      <div><b>古文参考</b><div class="text">${esc(item.reference_candidate?.text || "（无）")}</div><div class="meta">${esc(item.reference_candidate?.section || "")} · 对齐 ${item.reference_candidate ? Number(item.reference_candidate.alignment_confidence).toFixed(3) : "—"}</div></div>
+      <div><b>保守建议</b><div class="text">${esc(suggestion || "（无共识）")}</div><div class="meta">${esc(item.consensus_basis || "")}</div></div>
+    </div>
+    ${item.ai_review_hint ? `<div class="text"><b>AI 扫描建议（仍待人工确认）</b><div>${esc(item.ai_review_hint.corrected_text || "（留空，待判字）")}</div><div>${esc(item.ai_review_hint.review_note || "")}</div><button id="use-ai">采用 AI 建议并重新确认</button></div>` : ""}
+    <label>${AI ? "AI 辅助校订文本（待人工复核）" : "人工校订文本"}<textarea id="corrected" maxlength="2000">${esc(decision.corrected_text ?? "")}</textarea></label>
+    <label>复核备注<textarea id="review-note" maxlength="2000">${esc(decision.review_note ?? "")}</textarea></label>
+    <div class="bar"><button id="use-raw">采用原始文本</button><button id="use" ${!suggestion ? "disabled" : ""}>采用建议</button></div>
+    <div class="fields"><label>类别<select id="category">${Object.entries(categories).map(([v,n]) => `<option value="${v}" ${(decision.category || item.category_candidate) === v ? "selected" : ""}>${n}</option>`).join("")}</select></label><label>角色<input id="role" maxlength="120" value="${esc(decision.role ?? item.role_candidate ?? "")}"></label><label>阅读顺序<input id="order" type="number" min="1" step="1" value="${esc(decision.reading_order ?? item.reading_order ?? "")}"></label></div>
+    <div class="bbox">${["x","y","width","height"].map(v => `<label>${v}<input id="bbox-${v}" type="number" min="0" max="1" step="0.0001" value="${box[v]}"></label>`).join("")}</div>
+    <label class="check"><input id="confirmed" type="checkbox" ${decision.confirmed ? "checked" : ""}>${AI ? "AI 已对照扫描检查此项，仍待人工确认" : "已对照扫描确认此项"}</label>
+    <div class="bar"><button id="save" class="primary">保存此项</button><span id="saved-state" class="status">${decision.reviewed_at ? esc(decision.reviewed_at) : "待确认"}</span></div></div></div>
+    <details open><summary>整页扫描与阅读顺序</summary><div class="bar"><label class="check"><input id="page-confirmed" type="checkbox" ${pageReviews[item.page_id]?.confirmed ? "checked" : ""}>已确认本页阅读顺序</label><a href="${esc(item.page_image_path)}" target="_blank" rel="noopener">打开原图</a></div><label class="check"><input id="inventory-confirmed" type="checkbox" ${inventoryReviews[item.page_id]?.confirmed ? "checked" : ""}>已检查全页文字与图题，确认清单完整（含零图题页）</label><div class="meta">先确认本页全部文字/补框图题及阅读顺序；发现候选以外漏框时，请先在 PPOCRLabel 补框重建候选，不能勾选完整。</div><div class="page-wrap"><img id="page-image" src="${esc(item.page_image_path)}" alt="${esc(short(item.page_id))} 整页扫描"><canvas id="overlay"></canvas></div></details>`;
+  $("use").onclick = () => { $("corrected").value = suggestion; invalidate(); };
+  $("use-raw").disabled = item.raw_text == null;
+  $("use-raw").onclick = () => { $("corrected").value = item.raw_text || ""; invalidate(); };
+  if ($("use-ai")) $("use-ai").onclick = () => {
+    const hint = item.ai_review_hint;
+    $("corrected").value = hint.corrected_text || ""; $("review-note").value = hint.review_note || "";
+    $("category").value = hint.category; $("role").value = hint.role || "";
+    $("order").value = hint.reading_order ?? "";
+    for (const v of ["x","y","width","height"]) $("bbox-" + v).value = hint.bbox[v];
+    invalidate(); info("AI 建议已填入，须重新对照扫描并明确确认。");
+  };
+  for (const id of ["corrected","review-note","category","role","order","bbox-x","bbox-y","bbox-width","bbox-height"]) $(id).oninput = invalidate;
+  $("save").onclick = () => saveItem(item);
+  $("page-confirmed").onchange = () => {
+    const orders = DATA.items.filter(i => i.page_id === item.page_id && i.kind === "box").map(i => saved[i.id]?.reading_order ?? i.reading_order);
+    if ($("page-confirmed").checked && (!$("reviewer").value.trim() || new Set(orders).size !== orders.length || orders.some(o => !Number.isInteger(o) || o < 1 || o > orders.length))) {
+      $("page-confirmed").checked = false; info("请填写复核人，并为本页所有文字框设置互不重复的阅读顺序。"); return;
+    }
+    pageReviews[item.page_id] = {confirmed: $("page-confirmed").checked, reviewer: $("reviewer").value.trim(), reviewed_at: new Date().toISOString()}; delete inventoryReviews[item.page_id]; $("inventory-confirmed").checked = false; persist();
+  };
+  $("inventory-confirmed").onchange = () => {
+    const required = DATA.items.filter(i => i.page_id === item.page_id && ["box","caption"].includes(i.kind));
+    if ($("inventory-confirmed").checked && (!$("reviewer").value.trim() || !pageReviews[item.page_id]?.confirmed || required.some(i => !saved[i.id]?.confirmed))) {
+      $("inventory-confirmed").checked = false; info("完整性确认前，必须逐项确认本页全部文字和补框图题，并确认阅读顺序。"); return;
+    }
+    inventoryReviews[item.page_id] = {confirmed: $("inventory-confirmed").checked, reviewer: $("reviewer").value.trim(), reviewed_at: new Date().toISOString(), text_complete: true, captions_complete: true, caption_ids: required.filter(i => saved[i.id]?.category === "caption" && saved[i.id]?.role === "figure_title").map(i => i.id).sort()}; persist();
+  };
+  $("page-image").onload = () => drawPage(item);
+  if (AI) {
+    $("page-confirmed").nextSibling.textContent = "AI 已检查本页阅读顺序，待人工确认";
+    $("inventory-confirmed").nextSibling.textContent = "AI 已检查全页清单，待人工确认";
+  }
+  if ($("page-image").complete) drawPage(item);
+}
+function invalidate() {
+  $("confirmed").checked = false; $("saved-state").textContent = "草稿已更新，待重新确认";
+  const item = DATA.items.find(i => i.id === selected); if (!item) return;
+  saved[item.id] = {
+    corrected_text: $("corrected").value.trim() || null, category: $("category").value,
+    review_note: $("review-note").value.trim() || null,
+    role: $("role").value.trim() || null, confirmed: false, reviewer: $("reviewer").value.trim(),
+    reviewed_at: null, reading_order: $("order").value === "" ? null : Number($("order").value),
+    bbox: Object.fromEntries(["x","y","width","height"].map(v => [v, Number($("bbox-" + v).value)]))
+  };
+  delete pageReviews[item.page_id]; delete inventoryReviews[item.page_id]; $("page-confirmed").checked = false; $("inventory-confirmed").checked = false; persist(); drawPage(item);
+}
+function drawPage(item) {
+  // A detached image may finish loading after navigation. Never let its old
+  // callback draw into the newly selected item's crop or overlay.
+  if (item.id !== selected || $("editor").dataset.itemId !== item.id) return;
+  const image = $("page-image"), canvas = $("overlay"); if (!image.naturalWidth) return;
+  canvas.width = image.naturalWidth; canvas.height = image.naturalHeight; const ctx = canvas.getContext("2d");
+  for (const other of DATA.items.filter(i => i.page_id === item.page_id && i.kind === "box")) {
+    const b = saved[other.id]?.bbox || other.bbox;
+    ctx.strokeStyle = other.id === item.id ? "#b6422d" : "#15718b"; ctx.lineWidth = other.id === item.id ? 5 : 2;
+    ctx.strokeRect(b.x * canvas.width, b.y * canvas.height, b.width * canvas.width, b.height * canvas.height);
+    ctx.fillStyle = ctx.strokeStyle; ctx.font = "24px sans-serif"; ctx.fillText(String(saved[other.id]?.reading_order ?? other.reading_order), b.x * canvas.width, b.y * canvas.height - 3);
+  }
+  if (item.kind !== "box") { const b = saved[item.id]?.bbox || item.bbox; ctx.strokeStyle = "#b6422d"; ctx.lineWidth = 5; ctx.strokeRect(b.x * canvas.width, b.y * canvas.height, b.width * canvas.width, b.height * canvas.height); }
+  if (AI || DATA.revision) {
+    const b = saved[item.id]?.bbox || item.bbox;
+    $("editor").querySelector(".crop").classList.toggle("inspect-long", b.height / b.width > 8);
+    const values = [b.x,b.y,b.width,b.height];
+    if (values.every(Number.isFinite) && b.x >= 0 && b.y >= 0 && b.width > 0 && b.height > 0 && b.x + b.width <= 1 && b.y + b.height <= 1) {
+      const preview = document.createElement("canvas");
+      const scale = Math.min(1, 900 / Math.max(b.width * image.naturalWidth, b.height * image.naturalHeight));
+      preview.width = Math.max(1, Math.round(b.width * image.naturalWidth * scale));
+      preview.height = Math.max(1, Math.round(b.height * image.naturalHeight * scale));
+      preview.getContext("2d").drawImage(image, b.x * image.naturalWidth, b.y * image.naturalHeight, b.width * image.naturalWidth, b.height * image.naturalHeight, 0, 0, preview.width, preview.height);
+      $("editor").querySelector(".crop").src = preview.toDataURL("image/png");
+    }
+  }
+}
+function saveItem(item) {
+  const bbox = Object.fromEntries(["x","y","width","height"].map(v => [v, Number($("bbox-" + v).value)]));
+  const reading_order = $("order").value === "" ? null : Number($("order").value);
+  const reviewer = $("reviewer").value.trim(), corrected_text = $("corrected").value.trim() || null;
+  const confirmed = $("confirmed").checked;
+  if (Object.values(bbox).some(v => !Number.isFinite(v)) || bbox.x < 0 || bbox.y < 0 || bbox.width <= 0 || bbox.height <= 0 || bbox.x + bbox.width > 1 || bbox.y + bbox.height > 1) { info("坐标必须是页内归一化正面积区域。"); return; }
+  if (item.kind === "box" && (!Number.isInteger(reading_order) || reading_order < 1)) { info("文字框必须提供有效阅读顺序。"); return; }
+  if (confirmed && (!reviewer || (!AI && ["text","caption"].includes($("category").value) && !corrected_text))) { info("确认前请填写复核人及校订文本。"); return; }
+  if (saved[item.id]?.reading_order !== reading_order || JSON.stringify(saved[item.id]?.bbox || item.bbox) !== JSON.stringify(bbox)) delete pageReviews[item.page_id];
+  const review_note = $("review-note").value.trim() || null;
+  if (AI && confirmed && !review_note) { info("AI 检查须填写依据或不确定点，并保留待人工确认状态。"); return; }
+  saved[item.id] = {corrected_text,review_note,category:$("category").value,role:$("role").value.trim() || null,reading_order,bbox,confirmed,reviewer,reviewed_at:confirmed ? new Date().toISOString() : null};
+  delete inventoryReviews[item.page_id];
+  persist(); info("此项已保存到本机草稿。"); refresh();
+}
+$("page").onchange = () => { selected = null; info(""); refresh(); }; $("filter").onchange = refresh;
+$("scope-filter").onchange = () => { fillPages(); info(""); refresh(); };
+$("reviewer").onchange = () => localStorage.setItem(key + "-reviewer", $("reviewer").value.trim());
+$("prev").onclick = () => { const i = visible.findIndex(item => item.id === selected); if (i > 0) selected = visible[i - 1].id; refresh(); };
+$("next").onclick = () => { const i = visible.findIndex(item => item.id === selected); if (i < visible.length - 1) selected = visible[i + 1].id; refresh(); };
+$("export").onclick = () => {
+  const records = DATA.items.filter(item => AI ? saved[item.id]?.confirmed || saved[item.id]?.review_note : saved[item.id]?.confirmed).map(item => ({box_or_figure_id:item.id,page_id:item.page_id,kind:item.kind,...saved[item.id],verification_state:AI ? "inferred" : "verified",evidence:AI ? "scan_level_ai_review" : "scan_level_human_review",review_origin:AI ? "ai_assisted" : "human",requires_human_confirmation:AI,raw_text:item.raw_text ?? null,original_bbox:item.bbox,original_reading_order:item.reading_order ?? null}));
+  if (!records.length) { info("当前没有已保存并确认的项目。"); return; }
+  const page_reviews = Object.entries(pageReviews).filter(([,r]) => r.confirmed).map(([page_id,r]) => ({page_id,...r}));
+  const page_inventory_reviews = Object.entries(inventoryReviews).filter(([,r]) => r.confirmed).map(([page_id,r]) => ({page_id,...r}));
+  const payload = {schema_version:"1.0",dataset_kind:AI ? "ai_assisted_review_overrides" : "human_review_overrides",review_origin:AI ? "ai_assisted" : "human",evaluation_status:"not_evaluated",source_id:DATA.source_id,source_candidate_sha256:DATA.source_candidate_sha256,input_hashes:DATA.input_hashes,records,page_reviews,page_inventory_reviews};
+  const serialized = JSON.stringify(payload,null,2);
+  $("export-json").value = serialized; $("export-preview").hidden = false;
+  const url = URL.createObjectURL(new Blob([serialized], {type:"application/json"}));
+  const a = document.createElement("a"); a.href = url; a.download = AI ? "ai-assisted-review-overrides.json" : "historical-review-overrides.json"; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  info(`已导出 ${records.length} 项${AI ? "AI 辅助修订（待人工确认）" : "确认记录"}。`);
+};
+refresh();
+</script>
+</body>
+</html>

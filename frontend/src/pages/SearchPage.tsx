@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { SearchResponseSchema } from '../types';
 import type { SearchResponse, CapabilitiesResponse } from '../types';
 import { fetchAPI, APIError, isAbortError, toAPIError } from '../api/client';
+import DataStatusNotice from '../components/DataStatusNotice';
 
 const SCORE_COMPONENT_KEYS = ['sv', 'st', 'sr', 'sf', 'sg', 'se', 'u_model'] as const;
 
 export default function SearchPage({ capabilities }: { capabilities: CapabilitiesResponse }) {
   const [mode, setMode] = useState<'text' | 'image' | 'region'>('text');
   const [query, setQuery] = useState('');
+  const [corpus, setCorpus] = useState('all');
 
   const [file, setFile] = useState<File | null>(null);
 
@@ -49,12 +51,14 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
     abortRef.current = controller;
 
     try {
+      const filters = { book_ids: [], edition_ids: [],
+        ...(corpus === 'all' ? {} : { dataset_kinds: [corpus] }) };
       if (mode === 'text') {
         if (!query.trim()) throw new Error('请输入检索词');
         const res = await fetchAPI<SearchResponse>('/api/v1/search/text', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query, top_k: 10, filters: { book_ids: [], edition_ids: [] } }),
+          body: JSON.stringify({ query, top_k: 10, filters }),
           signal: controller.signal,
           schema: SearchResponseSchema
         });
@@ -113,7 +117,7 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
         const formData = new FormData();
         formData.append('file', file);
         formData.append('top_k', '10');
-        formData.append('filters', JSON.stringify({ book_ids: [], edition_ids: [] }));
+        formData.append('filters', JSON.stringify(filters));
 
         const res = await fetchAPI<SearchResponse>('/api/v1/search/image', {
           method: 'POST',
@@ -133,6 +137,7 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
 
         const payload: Record<string, unknown> = {
            bbox,
+           filters,
            top_k: 10,
            coordinate_space: 'normalized'
         };
@@ -161,6 +166,17 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
     <div className="space-y-6">
       <div className="bg-white shadow rounded-lg p-6">
         <h2 className="text-lg font-medium text-gray-900 mb-4">跨文献关联检索</h2>
+        <div className="mb-4">
+          <label htmlFor="corpus-filter" className="text-sm mr-2">检索数据</label>
+          <select id="corpus-filter" className="border rounded p-2 text-sm" value={corpus}
+            onChange={e => { abortRef.current?.abort(); setCorpus(e.target.value); setData(null); setError(null); setLoading(false); }}>
+            <option value="all">全部数据</option>
+            <option value="ai_assisted_real_pilot">真实古籍 · AI 辅助比赛版</option>
+            <option value="synthetic_fixture">合成工程示例</option>
+            <option value="human_reviewed_real_pilot">已独立审核的图题与范围</option>
+          </select>
+          <p className="text-xs text-gray-500 mt-2">比赛版暂不人工审核；AI 场景描述与原始 OCR 均保留待核实标记，检索分数用于候选排序。</p>
+        </div>
         <div className="flex space-x-2 sm:space-x-4 mb-4" role="tablist">
           {capabilities.search_types.includes('text') && (
             <button role="tab" aria-selected={mode === 'text'} onClick={() => handleModeChange('text')} className={`px-4 py-2 rounded-md ${mode === 'text' ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-gray-100 text-gray-700'}`}>文本</button>
@@ -211,10 +227,10 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
             </div>
             <fieldset className="grid grid-cols-4 gap-2">
                <legend className="text-sm font-medium text-gray-700 mb-1">归一化坐标 (0-1)</legend>
-               <div><label htmlFor="bbox-x" className="text-xs block">X</label><input id="bbox-x" type="number" step="0.01" value={bbox.x} onChange={e => setBbox({...bbox, x: parseFloat(e.target.value)})} className="w-full border p-1 rounded" /></div>
-               <div><label htmlFor="bbox-y" className="text-xs block">Y</label><input id="bbox-y" type="number" step="0.01" value={bbox.y} onChange={e => setBbox({...bbox, y: parseFloat(e.target.value)})} className="w-full border p-1 rounded" /></div>
-               <div><label htmlFor="bbox-w" className="text-xs block">Width</label><input id="bbox-w" type="number" step="0.01" value={bbox.width} onChange={e => setBbox({...bbox, width: parseFloat(e.target.value)})} className="w-full border p-1 rounded" /></div>
-               <div><label htmlFor="bbox-h" className="text-xs block">Height</label><input id="bbox-h" type="number" step="0.01" value={bbox.height} onChange={e => setBbox({...bbox, height: parseFloat(e.target.value)})} className="w-full border p-1 rounded" /></div>
+               <div><label htmlFor="bbox-x" className="text-xs block">X</label><input id="bbox-x" type="number" step="any" value={bbox.x} onChange={e => setBbox({...bbox, x: parseFloat(e.target.value)})} className="w-full border p-1 rounded" /></div>
+               <div><label htmlFor="bbox-y" className="text-xs block">Y</label><input id="bbox-y" type="number" step="any" value={bbox.y} onChange={e => setBbox({...bbox, y: parseFloat(e.target.value)})} className="w-full border p-1 rounded" /></div>
+               <div><label htmlFor="bbox-w" className="text-xs block">Width</label><input id="bbox-w" type="number" step="any" value={bbox.width} onChange={e => setBbox({...bbox, width: parseFloat(e.target.value)})} className="w-full border p-1 rounded" /></div>
+               <div><label htmlFor="bbox-h" className="text-xs block">Height</label><input id="bbox-h" type="number" step="any" value={bbox.height} onChange={e => setBbox({...bbox, height: parseFloat(e.target.value)})} className="w-full border p-1 rounded" /></div>
             </fieldset>
             <button type="submit" disabled={loading} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 self-start">
               {loading ? '搜索中...' : '区域检索'}
@@ -260,7 +276,10 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
                   )}
                 </div>
                 <div className="p-4 flex-1 flex flex-col">
-                  <h3 className="font-medium text-gray-900 mb-2 truncate" title={result.candidate_id}>候选关联: {result.candidate_id}</h3>
+                  <h3 className="font-medium text-gray-900 mb-2" title={result.title || result.candidate_id}>{result.title || `候选关联: ${result.candidate_id}`}</h3>
+                  <p className="text-xs text-gray-600">{result.source.book_title} · {result.source.page_or_folio}</p>
+                  <p className="text-xs text-gray-500">{result.source.source_name}</p>
+                  <DataStatusNotice status={result.data_status} />
                   <div className="text-xs text-gray-500 mb-2">
                     <span className="block mb-1">缺失模态: {result.score_components.missing_modalities?.length > 0 ? result.score_components.missing_modalities.join(', ') : '无'}</span>
                     <div className="grid grid-cols-4 gap-1">
@@ -287,6 +306,7 @@ export default function SearchPage({ capabilities }: { capabilities: Capabilitie
                     </span>
                     <button onClick={() => navigate(`/compare/${result.candidate_id}`)} className="text-sm text-blue-600 hover:text-blue-800 font-medium">对照与核验 &rarr;</button>
                   </div>
+                  <button onClick={() => navigate(`/figures/${result.figure_id}`)} className="text-sm text-blue-600 text-left mt-2">查看原图与文本 &rarr;</button>
                 </div>
               </div>
             ))}

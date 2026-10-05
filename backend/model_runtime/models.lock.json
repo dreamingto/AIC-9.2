@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "models": {
+    "bge": {
+      "repo": "BAAI/bge-small-zh-v1.5",
+      "revision": "7999e1d3359715c523056ef9478215996d62a620",
+      "files": {
+        "config.json": {
+          "sha256": "3853a7979202c348751b753e36f579c41d8da7d36af617d3d907e1fc9b441f2a",
+          "bytes": 776
+        },
+        "model.safetensors": {
+          "sha256": "354763b9b1357bc9c44f62c6be2276321081ed2567773608c0d0785b61d5a026",
+          "bytes": 95827648
+        },
+        "tokenizer.json": {
+          "sha256": "48cea5d44424912a6fd1ea647bf4fe50b55ab8b1e5879c3275f80e339e8fae26",
+          "bytes": 439125
+        },
+        "tokenizer_config.json": {
+          "sha256": "e6f3b96db926a37d4039995fbf5ad17de158dfb8f6343d607e4dbaad18d75f5a",
+          "bytes": 367
+        },
+        "special_tokens_map.json": {
+          "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+          "bytes": 125
+        },
+        "vocab.txt": {
+          "sha256": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+          "bytes": 109540
+        },
+        "README.md": {
+          "sha256": "c48a4eeea77f6b1d38b48ec1c5b8d4f86d5550cc43fa345a0db1b2ca1d082369",
+          "bytes": 27670
+        }
+      }
+    },
+    "chinese_clip": {
+      "repo": "OFA-Sys/chinese-clip-vit-base-patch16",
+      "revision": "36e679e65c2a2fead755ae21162091293ad37834",
+      "files": {
+        "config.json": {
+          "sha256": "97850313ab34f4fdeed3a7886b4db8b209a842a48d1cbda079abd071d12c7a2f",
+          "bytes": 3008
+        },
+        "preprocessor_config.json": {
+          "sha256": "0e00af244b402c34f92898e2ba68359762ad3788e087b2a0e4d575512f388ea9",
+          "bytes": 342
+        },
+        "pytorch_model.bin": {
+          "sha256": "7b7b583c210c867410bc6bdb8a55fe14eec62999e0a9ea31ff222dc501f9cfbe",
+          "bytes": 753177983
+        },
+        "vocab.txt": {
+          "sha256": "45bbac6b341c319adc98a532532882e91a9cefc0329aa57bac9ae761c27b291c",
+          "bytes": 109540
+        },
+        "README.md": {
+          "sha256": "c2a74a9831e9620d829678ca4e25c9c309c91945b635f95d77393ed7c634abbd",
+          "bytes": 7700
+        }
+      }
+    }
+  },
+  "download_endpoint": "https://hf-mirror.com"
+}
