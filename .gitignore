@@ -50,3 +50,27 @@ backend/data/release/
 release/*.zip
 output/
 tmp/
+
+# Local development history, prompts, reviews and competition production files.
+# Remove these from the Git index only; keep their original local copies.
+/.tuji/
+/competition/
+/Codex_机图索隐_主开发提示词.md
+/机图索隐_项目计划书.md
+/机图索隐_前端对接提示词.md
+/机图索隐_前端修复提示词.md
+/docs/*
+!/docs/architecture.md
+!/docs/api.md
+/scripts/publish_git_api.py
+/backend/scripts/prepare_competition_assets.py
+/release/publication.json
+/release/notes-*.md
+
+# Generated inventory and unused scaffold assets are retained locally.
+/backend/data/real_pilot/derived_pages.json
+/frontend/src/App.css
+/frontend/src/assets/hero.png
+/frontend/src/assets/react.svg
+/frontend/src/assets/vite.svg
+/frontend/public/icons.svg

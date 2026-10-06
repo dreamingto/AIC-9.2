@@ -80,16 +80,32 @@ frontend（Node>=22.12）：npm ci；npm run lint；npm run test -- --run；npm 
 
 GitHub Actions含前后端检查和独立PG迁移/集成。后端生成frontend/src/types/openapi.json，CI拒绝未提交的契约变化，Vitest比较后端字段与前端Zod响应Schema。接口更新后在backend执行python -m scripts.export_openapi --output ../frontend/src/types/openapi.json。
 
-## 文档与材料
+## 仓库结构与说明
 
-[V1.2.1 源码下载](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.1-competition-preview) 修复 Git 换行转换与冻结哈希不一致问题；请使用 `jitu-source-v1.2.1.zip`。冻结国内数据恢复包、匿名预审材料包和独立 PDF/MP4 继续从 [V1.2.0 固定资产](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.0-competition-preview) 下载。真实 Git 源码归档恢复及 176 组排名重放全部一致，最新在线 CI 后端 257 / 前端 13 通过；提交与各资产 SHA256 见 [发布记录](release/publication.json)。正式参赛团队信息与百度网盘/报名系统提交仍需参赛者办理。
+```text
+backend/
+  app/              API、数据模型、导入、检索、评分和证据服务
+  migrations/       PostgreSQL / pgvector 迁移
+  model_runtime/    可选神经模型服务、下载器与模型锁
+  scripts/          OCR、标注、导入、索引、数据恢复及对照工具
+  data/             受控配置、来源登记、实验协议和最小合成样例
+  tests/            后端自动化测试
+frontend/           React 应用、API 契约和组件 / 浏览器测试
+scripts/            项目启动与源码边界检查
+release/            国内数据校验锁、恢复说明和隔离运行配置
+docs/               当前架构与 API 说明
+.github/workflows/  持续集成
+```
 
-- [当前架构与需求](docs/机图索隐_当前架构与需求_V1.2.md)
-- [审查及修复记录](docs/机图索隐_项目与Git完整性审查_2026-10-05.md)
-- [固定查询V1](docs/机图索隐_固定查询算法对照与功能证据草稿.md)：历史结果，新报告独立生成。
-- [模型与案例](docs/机图索隐_真实检索模型与固定案例.md)
-- [国内数据](docs/机图索隐_国内古籍AI比赛演示.md)
-- competition/：技术报告源稿、简介、讲稿、答辩内容与生成工具。
-- .tuji/TESTS.md：实际检查、跳过、not_run分轮记录。
+- [架构、功能与数据流程](docs/architecture.md)
+- [接口与请求约定](docs/api.md)
+- [真实数据恢复与模型准备](release/README.md)
+- [中文模型服务](backend/model_runtime/README.md)
+- [OCR 与标注数据说明](backend/data/real_pilot/README.md)
+- [前端启动与构建](frontend/README.md)
 
-长文保留历史基线范围；当前能力以V1.2说明为准。比赛暂不人工审核，旧人工工作流可选。AI场景、动态功能和关系不是历史结论；无独立真值时CER/WER/图题召回等保持not_evaluated。
+仓库保留完整功能代码、依赖锁、配置、迁移、必要样例、自动化测试与 CI。开发提示词、阶段计划、个人交接日志、审查报告、比赛材料及其制作工具只在本地保存，并由 `.gitignore` 排除。原始扫描、模型权重、数据库、输出文件和缓存也独立本地管理。
+
+历史源码与固定数据仍可从 [V1.2.1 源码归档](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.1-competition-preview) 和 [V1.2.0 数据资产](https://github.com/dreamingto/AIC-9.2/releases/tag/v1.2.0-competition-preview) 获取。运行所需数据按 `release/domestic-data.lock.json` 校验；新的仓库整理不修改既有冻结模型、输入、实验协议或历史发布资产。
+
+比赛阶段暂不人工审核；可选标注流程保留。AI 场景、功能和关系不构成历史结论；没有独立真值时 CER、WER、图题召回率及检索研究指标保持 `not_evaluated`。

@@ -3,6 +3,7 @@
 本目录为“机图索隐”项目的前端单页应用（SPA）。
 
 ## 技术栈
+
 - React 19
 - TypeScript
 - Vite
@@ -15,6 +16,7 @@
 ## 本地开发启动
 
 在 `frontend` 目录下运行：
+
 ```bash
 npm ci
 npm run dev
@@ -22,6 +24,7 @@ npm run dev
 将启动 Vite 开发服务器，`/api` 代理转发到 `http://localhost:8000`，需确保后端已在运行。
 
 ## 构建与测试
+
 ```bash
 npm run build # 生产构建
 npm run test -- --run # 组件与契约测试
@@ -39,12 +42,16 @@ Playwright 默认访问 `http://127.0.0.1` 并使用本机 Chrome，覆盖来源
 ## Docker Compose 启动
 
 根目录下可以一键启动前后端及数据库：
+
 ```bash
 docker compose up --build
 ```
 前端服务通过 Nginx 运行在容器 80 端口并映射到宿主机 80 端口，前端页面入口为：[http://localhost](http://localhost)，`/api/` 路由被自动转发至 `backend:8000`。
 
 ## 注意事项
-- 本前端严格对接 API v1 的公开契约，在后端 `synthetic_fixture` 及演示环境下运行。
+
+- Node.js 要求 >=22.12.0，使用 package-lock.json 和 `npm ci` 安装依赖。
+- 页面包含 `/search`、`/sources`、`/figures/:figureId`、`/compare/:candidateId` 和 `/demo`；根路径跳转检索页。
+- 本前端对接 API v1，并从 capabilities 读取 Provider、上传限制和核验状态；检索可选择 synthetic fixture 或已导入的真实数据。
 - 不要将受限图片下载到本地持久化。
 - 数据与状态如实展示模型推断、人工核验反馈结果。
